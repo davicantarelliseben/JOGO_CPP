@@ -11,7 +11,10 @@ class Inventory {
         Item* weapon;
     
     public:
-        Inventory();
+        Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon);
         bool addItem(const Item& item);
+        bool isFull();
+        void printInventory();
+        bool replaceItem(const Item& item);
         void equipWeapon(Item* newWeapon);
-};
+}; 
