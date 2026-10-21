@@ -17,4 +17,8 @@ class Inventory {
         void printInventory();
         bool replaceItem(const Item& item);
         void equipWeapon(Item* newWeapon);
+        unsigned int getBonusLife();
+        unsigned int getAttack();
+        unsigned int getArmor();
+        unsigned int getSpeed();
 }; 
