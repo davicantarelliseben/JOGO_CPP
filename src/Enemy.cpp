@@ -1,15 +1,11 @@
 #include "Enemy.h"
 
-Enemy::Enemy() : type(type), boss(boss), level(level) {}
+Enemy::Enemy(unsigned int maxLife, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, enemyType type, unsigned int level)
+    : Character(maxLife, currentLife, attack, armor, speed), type(type), level(level) {}
 
 enemyType Enemy::getType() {
     return this->type;
 }
-
-bossType Enemy::getBoss() {
-    return this->boss;
-}
-
 unsigned int Enemy::getLevel() {
     return this->level;
 }

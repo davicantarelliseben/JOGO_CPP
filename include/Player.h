@@ -9,7 +9,7 @@ class Player : public Character {
         Inventory inventory;
     
     public:
-        Player();
+        Player(unsigned int maxLife, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, unsigned int coins, Inventory inventory);
         ~Player();
         void addCoins(unsigned int amount);
 };

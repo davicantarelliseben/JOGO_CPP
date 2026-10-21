@@ -1,6 +1,6 @@
 #include "Character.h"
 
-Character::Character() : maxLife(maxLife), currentLife(currentLife), attack(attack), armor(armor), speed(speed) {}
+Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed) : maxLife(maxLife), currentLife(currentLife), attack(attack), armor(armor), speed(speed) {}
 
 Character::~Character() {}
 

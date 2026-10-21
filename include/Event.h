@@ -1,6 +1,6 @@
 #pragma once
 
-typedef enum {/*...*/} eventType;
+typedef enum { BAU, FOGUEIRA } eventType;
 
 class Event {
     private:
