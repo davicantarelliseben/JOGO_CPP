@@ -11,6 +11,7 @@ class Battle {
     public:
         Battle(Player* player, Enemy* enemy, unsigned int turno);
         void nextTurn();
-        bool isBattleOver();
+        int isBattleOver();
         void calcDamage();
+        void battleGoing();
 };

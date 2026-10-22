@@ -26,6 +26,7 @@ class Character {
         
 
         bool isAlive();
-        void takeDamage(unsigned int damage);
+        void takeDamage(Character& pp);
 
+        
 };

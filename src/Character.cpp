@@ -1,4 +1,4 @@
-#include "Character.h"
+#include "include/Character.h"
 
 Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed) : maxLife(mLife), currentLife(cLife), attack(atk), armor(armor), speed(speed) {}
 
@@ -55,6 +55,12 @@ bool Character::isAlive() {
     return 1;
 }
 
-void Character::takeDamage(unsigned int damage) {
-    this->currentLife -= damage;
+void Character::takeDamage(Character& pp) {
+    unsigned int damage = pp.getAttack();
+
+    if(damage >= this->currentLife){
+        this->currentLife = 0;
+    }else {
+        this->currentLife -= damage;
+    }
 }

@@ -1,9 +1,9 @@
-#include <Character.h>
-#include <Player.h>
-#include <Inventory.h>
-#include <Item.h>
-#include <Battle.h>
-#include <Enemy.h>
+#include "include/Character.h"
+#include "include/Player.h"
+#include "include/Inventory.h"
+#include "include/Item.h"
+#include "include/Battle.h"
+#include "include/Enemy.h"
 
 #include <iostream>
 #include <vector>
@@ -39,32 +39,10 @@ int main() {
         if(selected == "battle"){
             std::cout << "iniciando batalha..." << std::endl;
             
-            Enemy Urso(10,10,10,10,10,BEAR,1);//Enemy(unsigned int max_life, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, enemyType type, unsigned int level);
+            Enemy Urso(10,10,1,10,1,BEAR,1);//Enemy(unsigned int max_life, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, enemyType type, unsigned int level);
             Battle batalha(&c1,&Urso,1);//Battle::Battle(Player* player, Enemy* enemy, unsigned int turno) : player(player), enemy(enemy), turno(1)
 
-            do{
-
-                std::cout << "Voce levou um ataque do Urso :" << std::endl;
-
-                c1.takeDamage(Urso.getAttack());
-                
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << ".";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << ".";
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << ".\n";
-
-                std::cout << c1.getCurrentLife() << '\n';
-
-
-            } while (c1.getCurrentLife() > 0);
-            
-            if(c1.getCurrentLife() <= 0 ){
-                std::cout << "Voce morreu.." << std::endl;
-            }else {
-                std::cout << "Voce venceu a battalha !! " << std::endl;
-            }
+           batalha.battleGoing();
         }
     }
 
