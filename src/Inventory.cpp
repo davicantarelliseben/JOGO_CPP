@@ -1,4 +1,4 @@
-#include "Inventory.h"
+#include <Inventory.h>
 #include <iostream>
 
 Inventory::Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon) : slots(slots), slotsSize(slotsSize), bag(bag), weapon(weapon) {}
@@ -9,7 +9,7 @@ bool Inventory::isFull() {
 
 void Inventory::printInventory() {
     for(int i = 0; i < slots.size(); i++) {
-        std::cout << printItem() << std::endl;
+       // std::cout << printItem() << std::endl;
     }
 
 }

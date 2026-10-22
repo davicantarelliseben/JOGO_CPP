@@ -1,4 +1,4 @@
-#include "Enemy.h"
+#include <Enemy.h>
 
 Enemy::Enemy(unsigned int maxLife, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, enemyType type, unsigned int level)
     : Character(maxLife, currentLife, attack, armor, speed), type(type), level(level) {}
@@ -13,51 +13,59 @@ unsigned int Enemy::getLevel() {
 void Enemy::Buff(enemyType type) {
     switch(type) {
 
-        case URSO:
+        case BEAR:
+
+            this->maxLife += 10;
+            this->attack += 100;
             
             break;
-        case ARANHA:
 
+        case SPIDER:
+            this->speed += 5;
+            this->attack += 8;
             break;
-        case LOBO:
 
+        case WOLF:
+            this->attack += 10;
+            this->speed += 2;
             break;
-        case MORCEGO:
 
-            break;
-        case HEDGEHOG:
+        //case MORCEGO:
+            
+        //    break;
+        //case HEDGEHOG:
 
-            break;
-        case CORVO:
+        //    break;
+        //case CORVO:
 
-            break;
-        case COBRA:
+        //    break;
+        //case COBRA:
      
-            break;
-        case SAPO:
+        //    break;
+        //case SAPO:
 
-            break;
-        case CASTOR:
+        //    break;
+        //case CASTOR:
 
-            break;
-        case LIBELULA:
+        //    break;
+        //case LIBELULA:
 
-            break;
-        case GUARDAS_DO_PALACIO:
+        //    break;
+        //case GUARDAS_DO_PALACIO:
 
-            break;
-        case SLIME:
+        //    break;
+        //case SLIME:
 
-            break;
-        case TARTARUGA:
+        //    break;
+        //case TARTARUGA:
 
-            break;
-        case ABELHA:
+        //    break;
+        //case ABELHA:
 
-            break;
-        case GUAXINIM:
+        //    break;
+        //case GUAXINIM:
 
-            break;
+        //    break;
     }
 }
 

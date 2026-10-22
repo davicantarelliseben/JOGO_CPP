@@ -1,5 +1,5 @@
 all :
-	g++ main.cpp Character.cpp Player.cpp Enemy.cpp -Iinclude -o a.exe
+	g++ main.cpp Character.cpp Player.cpp Inventory.cpp Item.cpp Enemy.cpp Battle.cpp -Iinclude -o a.exe
 	./a.exe
 
 .PHONY: commit
