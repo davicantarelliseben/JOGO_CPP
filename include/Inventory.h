@@ -15,10 +15,10 @@ class Inventory {
         bool addItem(const Item& item);
         bool isFull();
         void printInventory();
-        bool replaceItem(const Item& item);
+        void replaceItem(const Item& item);
         void equipWeapon(Item* newWeapon);
-        unsigned int getBonusLife();
-        unsigned int getAttack();
-        unsigned int getArmor();
-        unsigned int getSpeed();
+        unsigned int getBonusLife() const;
+        unsigned int getAttack() const;
+        unsigned int getArmor() const;
+        unsigned int getSpeed() const;
 }; 
