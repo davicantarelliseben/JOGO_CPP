@@ -4,9 +4,11 @@
 
 class Map {
     private:
+        int steps;
         bool day;
         std::vector<std::vector<Tiles>> grid;
     
     public:
-        void dayToNight();
+        void cycleDay();
+        int getSteps();
 };

@@ -25,12 +25,16 @@ unsigned int Character::getSpeed() {
 }
 
 bool Character::isAlive() {
-    if(this->currentLife == 0) {
+    if(this->currentLife < 1) { //mudei a condição de ==0 pra < 1
         return 0;
     }
     return 1;
 }
 
 void Character::takeDamage(unsigned int damage) {
-    this->currentLife -= damage;
+    if(damage > this->currentLife) {
+        //alguma função do tipo kill()
+    } else {
+        this->currentLife -= damage;
+    }
 }

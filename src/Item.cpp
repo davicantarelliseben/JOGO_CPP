@@ -29,3 +29,26 @@ unsigned int Item::getArmor() const {
 unsigned int Item::getSpeed() const {
     return this->speed;
 }
+
+bool Item::getAttackOil() const {
+    return this->attackOil;
+}
+
+bool Item::getArmorOil() const {
+    return this->armorOil;
+}
+
+bool Item::getSpeedOil() const {
+    return this->speedOil;
+}
+
+void Item::setOil(int opt) {
+    if(opt==0) {
+        this->attackOil = false;
+        this->armorOil = false;
+        this->speedOil = false;
+    }
+    if(opt==1) this->attackOil = true;
+    if(opt==2) this->armorOil = true;
+    if(opt==3) this->speedOil = true;
+}

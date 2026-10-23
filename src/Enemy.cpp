@@ -13,50 +13,23 @@ unsigned int Enemy::getLevel() {
 void Enemy::Buff(enemyType type) {
     switch(type) {
 
-        case URSO:
+        case BEAR:
             
             break;
-        case ARANHA:
+        case SPIDER:
 
             break;
-        case LOBO:
-
-            break;
-        case MORCEGO:
+        case WOLF:
 
             break;
         case HEDGEHOG:
 
             break;
-        case CORVO:
+        case RAVEN:
 
             break;
-        case COBRA:
+        case BAT:
      
-            break;
-        case SAPO:
-
-            break;
-        case CASTOR:
-
-            break;
-        case LIBELULA:
-
-            break;
-        case GUARDAS_DO_PALACIO:
-
-            break;
-        case SLIME:
-
-            break;
-        case TARTARUGA:
-
-            break;
-        case ABELHA:
-
-            break;
-        case GUAXINIM:
-
             break;
     }
 }
