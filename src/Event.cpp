@@ -1,4 +1,4 @@
-#include "Event.h"
+#include "../include/Event.h"
 
 eventType Event::getEventType() {
     return this->type;

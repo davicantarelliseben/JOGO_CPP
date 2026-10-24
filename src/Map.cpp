@@ -8,7 +8,7 @@ unsigned int Map::countStep() {
     return this->stepsCounter;
 }
 
-void Map::cycleDay() { // algum lugar tem que diminuir os passos, quando zerar chama essa função
+void Map::cycleDay() {
     if(this->day) {
         this->day = false;
         this->steps = 30;
