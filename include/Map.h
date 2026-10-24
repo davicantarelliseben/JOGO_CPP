@@ -4,11 +4,12 @@
 
 class Map {
     private:
-        int steps;
+        unsigned int stepsCounter;
         bool day;
         std::vector<std::vector<Tiles>> grid;
     
     public:
         void cycleDay();
         int getSteps();
+        unsigned int countStep();
 };

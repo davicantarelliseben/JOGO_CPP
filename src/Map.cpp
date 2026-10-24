@@ -1,15 +1,19 @@
 #include "Map.h"
 
-int Map::getSteps() {
-    return this->steps;
+unsigned int Map::countStep() {
+    this->stepsCounter--;
+    if(this->stepsCounter < 1) {
+        cycleDay();
+    }
+    return this->stepsCounter;
 }
 
 void Map::cycleDay() { // algum lugar tem que diminuir os passos, quando zerar chama essa função
-    if(day) {
-        day = false;
-        steps = 30;
+    if(this->day) {
+        this->day = false;
+        this->steps = 30;
     } else {
-        day = true;
-        steps = 50;
+        this->day = true;
+        this->steps = 50;
     }
 }

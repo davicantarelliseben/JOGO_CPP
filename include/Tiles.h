@@ -4,7 +4,7 @@
 
 class Tiles {
     private:
-        bool Walkable;
+        bool walkable;
         Battle* battle;
         Event* event;
     
