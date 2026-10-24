@@ -3,16 +3,16 @@
 class Character {
 
     private:
-        unsigned int maxLife, currentLife, attack, armor, speed;
+        int maxLife, currentLife, attack, armor, speed;
 
     public:
-        Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed);
+        Character(int mLife, int cLife, int atk, int armor, int speed);
         ~Character();
-        unsigned int getMaxLife();
-        unsigned int getCurrentLife();
-        unsigned int getAttack();
-        unsigned int getArmor();
-        unsigned int getSpeed();
+        int getMaxLife();
+        int getCurrentLife();
+        int getAttack();
+        int getArmor();
+        int getSpeed();
         bool isAlive();
         void takeDamage(unsigned int damage);
 };

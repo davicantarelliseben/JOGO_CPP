@@ -2,5 +2,5 @@
 
 int main() {
 
-    Enemy morcego(1,1,1,1,1, enemyType::MORCEGO, 123);
+    Enemy morcego(1,1,1,1,1, enemyType::BAT, 123);
 }

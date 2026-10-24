@@ -11,7 +11,7 @@ class Enemy : public Character {
         unsigned int level;
 
     public:
-        Enemy(unsigned int max_life, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, enemyType type, unsigned int level);
+        Enemy(int max_life, int currentLife, int attack, int armor, int speed, enemyType type, unsigned int level);
         enemyType getType();
         unsigned int getLevel();
         void Buff(enemyType type);

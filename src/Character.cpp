@@ -1,26 +1,26 @@
 #include "Character.h"
 
-Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed) : maxLife(maxLife), currentLife(currentLife), attack(attack), armor(armor), speed(speed) {}
+Character::Character(int mLife, int cLife, int atk, int armor, int speed) : maxLife(maxLife), currentLife(currentLife), attack(attack), armor(armor), speed(speed) {}
 
 Character::~Character() {}
 
-unsigned int Character::getMaxLife() {
+int Character::getMaxLife() {
     return this->maxLife;
 }
 
-unsigned int Character::getCurrentLife() {
+int Character::getCurrentLife() {
     return this->currentLife;
 }
 
-unsigned int Character::getAttack() {
+int Character::getAttack() {
     return this->attack;
 }
 
-unsigned int Character::getArmor() {
+int Character::getArmor() {
     return this->armor;
 }
 
-unsigned int Character::getSpeed() {
+int Character::getSpeed() {
     return this->speed;
 }
 

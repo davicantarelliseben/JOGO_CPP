@@ -7,18 +7,18 @@ class Inventory {
     private:
         std::vector<Item> slots;
         unsigned int slotsSize;
-        Item* bag;
-        Item* weapon;
+        Item bag;
+        Item weapon;
     
     public:
-        Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon);
+        Inventory(std::vector<Item> slots, unsigned int slotsSize, const Item& bag, const Item& weapon);
         bool addItem(const Item& item);
         bool isFull();
         void printInventory();
         void replaceItem(const Item& item);
-        void equipWeapon(Item* newWeapon);
-        unsigned int getBonusLife() const;
-        unsigned int getAttack() const;
-        unsigned int getArmor() const;
-        unsigned int getSpeed() const;
+        void equipWeapon(const Item& newWeapon);
+        int getBonusLife() const;
+        int getAttack() const;
+        int getArmor() const;
+        int getSpeed() const;
 }; 

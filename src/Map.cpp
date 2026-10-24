@@ -11,9 +11,9 @@ unsigned int Map::countStep() {
 void Map::cycleDay() {
     if(this->day) {
         this->day = false;
-        this->steps = 30;
+        this->stepsCounter = 30;
     } else {
         this->day = true;
-        this->steps = 50;
+        this->stepsCounter = 50;
     }
 }

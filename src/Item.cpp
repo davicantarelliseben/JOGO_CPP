@@ -1,54 +1,33 @@
 #include "Item.h"
 #include <iostream>
 
-Item::Item(std::string name, unsigned int life, unsigned int attack, unsigned int armor, unsigned int speed) : name(name), life(life), attack(attack), armor(armor), speed(speed) {}
+void Item::printItem() const {
+    std::cout << "--- " << name << " [" << rarity << "] ---" << std::endl;
+    std::cout << "ID: " << id << std::endl;
 
-void Item::printItem() const{
-    std::cout << life << std::endl;
-    std::cout << attack << std::endl;
-    std::cout << armor << std::endl;
-    std::cout << speed << std::endl; 
-}
+    //se for stats negativo devolve -2, tem item que faz isso(espada de 4 attack -2 speed)
+    if (life != 0)   std::cout << "Life: "   << (life > 0 ? "+" : "")   << life << std::endl;
+    if (attack != 0) std::cout << "Attack: " << (attack > 0 ? "+" : "") << attack << std::endl;
+    if (armor != 0)  std::cout << "Armor: "  << (armor > 0 ? "+" : "")  << armor << std::endl;
+    if (speed != 0)  std::cout << "Speed: "  << (speed > 0 ? "+" : "")  << speed << std::endl;
 
-std::string Item::getName() const {
-    return this->name;
-}
-
-unsigned int Item::getLife() const {
-    return this->life;
-}
-
-unsigned int Item::getAttack() const {
-    return this->attack;
-}
-
-unsigned int Item::getArmor() const {
-    return this->armor;
-}
-
-unsigned int Item::getSpeed() const {
-    return this->speed;
-}
-
-bool Item::getAttackOil() const {
-    return this->attackOil;
-}
-
-bool Item::getArmorOil() const {
-    return this->armorOil;
-}
-
-bool Item::getSpeedOil() const {
-    return this->speedOil;
+    if (attackOil || armorOil || speedOil) {
+        std::cout << "Applied Oil: ";
+        if (attackOil) std::cout << "[Attack Oil (+1)]" << std::endl;
+        if (armorOil)  std::cout << "[Armor Oil (+1)]" << std::endl;
+        if (speedOil)  std::cout << "[Speed Oil (+1)]" << std::endl;
+    }
+    std::cout << "-----------------------" << std::endl;
 }
 
 void Item::setOil(int opt) {
-    if(opt==0) {
+    if (opt == 0) {
         this->attackOil = false;
         this->armorOil = false;
         this->speedOil = false;
+        return;
     }
-    if(opt==1) this->attackOil = true;
-    if(opt==2) this->armorOil = true;
-    if(opt==3) this->speedOil = true;
+    this->attackOil = (opt == 1);
+    this->armorOil  = (opt == 2);
+    this->speedOil  = (opt == 3);
 }
