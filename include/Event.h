@@ -1,14 +1,15 @@
 #pragma once
 
-typedef enum { treasureChest, bladeOils, campfire, crystalBall, forge, golem, 
-    lookoutTower, travellingMerchant, waypoint, herosGrave, fairyQueen, 
+typedef enum { treasureChest, bladeOils, campfire, crystalBall, forge, golem,
+    lookoutTower, travellingMerchant, waypoint, herosGrave, fairyQueen,
     wishingWell, beehive, house, fairy, jewelryBox, cauldron } eventType;
 
 class Event {
-    private:
-        eventType type;
+private:
+    eventType type;
 
-    public:
-        eventType getEventType();
-        void triggerEvent(eventType type);
+public:
+    Event(eventType type = treasureChest);
+    eventType getEventType();
+    void triggerEvent(eventType type);
 };

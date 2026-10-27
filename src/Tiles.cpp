@@ -1,16 +1,16 @@
-#include "../include/Tiles.h"
+#include "Tiles.h"
+
+Tiles::Tiles(bool walkable, Battle* battle, Event* event)
+    : walkable(walkable), battle(battle), event(event) {}
 
 bool Tiles::isWalkable() {
-    if(walkable) return true;
-    return false;
+    return walkable;
 }
 
 bool Tiles::isBattle() {
-    if(battle) return true;
-    return false;
+    return battle != nullptr;
 }
 
 bool Tiles::isEvent() {
-    if(event) return true;
-    return false;
+    return event != nullptr;
 }

@@ -1,6 +1,6 @@
 #include "GameItemException.h"
 
-GameItemException::GameItemException(const std::string& msg) 
+GameItemException::GameItemException(const std::string& msg)
     : mensagem(msg) {}
 
 const char* GameItemException::what() const noexcept {

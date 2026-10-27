@@ -1,9 +1,15 @@
-#include "include/Player.h"
-#include "include/Inventory.h"
+#include "Player.h"
+#include "Inventory.h"
+#include <algorithm>
 #include <iostream>
 
-Player::Player(std::string nome,unsigned int maxLife, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, unsigned int coins, Inventory inventory) : Character(maxLife, currentLife, attack, armor, speed), name(nome), coins(coins), inventory(inventory) {
-    setCurrentLife(getMaxLife());
+Player::Player(std::string nome, unsigned int maxLife, unsigned int currentLife,
+               unsigned int attack, unsigned int armor, unsigned int speed,
+               unsigned int coins, Inventory inventory)
+    : Character(maxLife, currentLife, attack, armor, speed),
+      name(nome), coins(coins), inventory(inventory) {
+    currentLife = std::min(currentLife, getTotalMaxLife());
+    setCurrentLife(currentLife);
 }
 
 Player::~Player() {}
@@ -21,10 +27,10 @@ void Player::setInventory(const Inventory& novo) {
 
 bool Player::addItem(const Item& item) {
     if (!inventory.addItem(item)) {
-        return false;                         // inventario cheio
+        return false;
     }
-    // Item que da vida maxima tambem cura esse tanto
-    Item copia = item;   // copia porque os getters do Item nao sao const
+
+    Item copia = item;
     currentLife += copia.getLife();
     ajustarVida();
     return true;
@@ -34,36 +40,36 @@ bool Player::removeItem(unsigned int index) {
     if (!inventory.removeItem(index)) {
         return false;
     }
-    inventory.removeItem(index);//foco nisso aqui que dá merda
-    ajustarVida();                            // perdeu vida maxima -> corta o excesso
+    ajustarVida();
     return true;
 }
 
 bool Player::replaceItem(unsigned int index, const Item& novo) {
-    Item antigo("a",0, 0, 0, 0);
+    Item antigo(0, "", "", 0, 0, 0, 0);
     if (!inventory.replaceItem(index, novo, &antigo)) {
         return false;
     }
-    // ajusta pela diferenca de vida entre o item novo e o antigo
+
     Item copiaNovo = novo;
-    unsigned int vidaNova = copiaNovo.getLife();
-    unsigned int vidaVelha = antigo.getLife();
+    unsigned int vidaNova = static_cast<unsigned int>(std::max(0, copiaNovo.getLife()));
+    unsigned int vidaVelha = static_cast<unsigned int>(std::max(0, antigo.getLife()));
     if (vidaNova > vidaVelha) {
-        currentLife += vidaNova - vidaVelha;
+        currentLife += (vidaNova - vidaVelha);
     }
     ajustarVida();
     return true;
 }
+
 // ---------------- Player Name ---------------------
 
-std::string Player::getName()  {return this->name;}
+std::string Player::getName() { return this->name; }
 
 // ---------------- atributos totais ----------------
 
 unsigned int Player::getTotalMaxLife() const { return this->maxLife + inventory.getBonusLife(); }
-unsigned int Player::getTotalAttack()  const { return this->attack  + inventory.getAttack(); }
-unsigned int Player::getTotalArmor()   const { return this->armor   + inventory.getArmor(); }
-unsigned int Player::getTotalSpeed()   const { return this->speed   + inventory.getSpeed(); }
+unsigned int Player::getTotalAttack() const { return this->attack + inventory.getAttack(); }
+unsigned int Player::getTotalArmor() const { return this->armor + inventory.getArmor(); }
+unsigned int Player::getTotalSpeed() const { return this->speed + inventory.getSpeed(); }
 
 void Player::ajustarVida() {
     if (currentLife > getTotalMaxLife()) {
@@ -73,32 +79,36 @@ void Player::ajustarVida() {
 
 void Player::heal(unsigned int quantidade) {
     currentLife += quantidade;
-    ajustarVida();
+    if (currentLife > getTotalMaxLife()) {
+        currentLife = getTotalMaxLife();
+    }
 }
 
 void Player::fullHeal() {
     currentLife = getTotalMaxLife();
 }
 
-
-void Player::printStats(){
+void Player::printStats() {
     std::cout << " Player " << std::endl;
-    std::cout << "| "<< "Vida Maxima :" << getMaxLife() << " Atual(Básico + Armamento) : " << getTotalMaxLife() << "" << std::endl;
-    std::cout << "| "<< "Vida Atual :" << getCurrentLife() << " Atual(Básico + Armamento) : " << getTotalMaxLife() <<  "" << std::endl;
-    std::cout << "| "<< "Ataque :" <<  getAttack() << " Atual(Básico + Armamento) : " << getTotalAttack() << ""<< std::endl;
-    std::cout << "| "<< "Armadura :" << getArmor() << " Atual(Básico + Armamento) : " << getArmor() << "" << std::endl;
-    std::cout << "| "<< "Velocidade :" <<  getSpeed() << " Atual(Básico + Armamento) : " << getSpeed() << "" << std::endl;
+    std::cout << "| Vida Maxima: " << getMaxLife() << " | Total: " << getTotalMaxLife() << std::endl;
+    std::cout << "| Vida Atual: " << getCurrentLife() << " | Maximo: " << getTotalMaxLife() << std::endl;
+    std::cout << "| Ataque: " << getAttack() << " | Total: " << getTotalAttack() << std::endl;
+    std::cout << "| Armadura: " << getArmor() << " | Total: " << getTotalArmor() << std::endl;
+    std::cout << "| Velocidade: " << getSpeed() << " | Total: " << getTotalSpeed() << std::endl;
 }
 
-void Player::printInventory(){
-
+void Player::printInventory() {
     std::cout << "Inventario (" << inventory.getItemCount() << "/" << inventory.getMaxSlots() << ")\n";
-    for (unsigned int i = 0; i < inventory.getItemCount(); i++) {
-    Item *temp = inventory.getItem(i);
-    std::cout << " [" << i + 1 << "] " << "NAME = "<< temp->getName() << " | VIDA +" << temp->getLife() << " | ATK +" << temp->getAttack() << " | ARM +" << temp->getArmor() << " | SPD +" << temp->getSpeed() << "\n";
+    for (unsigned int i = 0; i < inventory.getItemCount(); ++i) {
+        Item* temp = inventory.getItem(i);
+        if (temp == nullptr) {
+            continue;
+        }
+        std::cout << " [" << i + 1 << "] NAME = " << temp->getName()
+                  << " | VIDA +" << temp->getLife() << " | ATK +" << temp->getAttack()
+                  << " | ARM +" << temp->getArmor() << " | SPD +" << temp->getSpeed() << "\n";
     }
 }
-
 
 // ---------------- moedas ----------------
 

@@ -1,5 +1,5 @@
-#include "include/Battle.h"
-#include "include/Inventory.h"
+#include "Battle.h"
+#include "Inventory.h"
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -101,6 +101,48 @@ void Battle::battleGoing() {
 
 void Battle::nextTurn() {
     this->turno++;
+}
+
+void Battle::calcDamage() {
+    if (player == nullptr || enemy == nullptr) {
+        return;
+    }
+
+    unsigned int danoJogador = player->getTotalAttack();
+    unsigned int danoInimigo = enemy->getAttack();
+
+    unsigned int defesaJogador = player->getTotalArmor();
+    unsigned int defesaInimigo = enemy->getArmor();
+
+    if (danoJogador > defesaInimigo) {
+        danoJogador -= defesaInimigo;
+    } else {
+        danoJogador = 0;
+    }
+
+    if (danoInimigo > defesaJogador) {
+        danoInimigo -= defesaJogador;
+    } else {
+        danoInimigo = 0;
+    }
+
+    unsigned int vidaJogador = player->getCurrentLife();
+    unsigned int vidaInimigo = enemy->getCurrentLife();
+
+    if (danoInimigo >= vidaJogador) {
+        vidaJogador = 0;
+    } else {
+        vidaJogador -= danoInimigo;
+    }
+
+    if (danoJogador >= vidaInimigo) {
+        vidaInimigo = 0;
+    } else {
+        vidaInimigo -= danoJogador;
+    }
+
+    player->setCurrentLife(vidaJogador);
+    enemy->setCurrentLife(vidaInimigo);
 }
 
 // 0 = continua | 1 = jogador venceu | 2 = inimigo venceu

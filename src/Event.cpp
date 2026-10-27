@@ -1,11 +1,14 @@
-#include "../include/Event.h"
+#include "Event.h"
+
+Event::Event(eventType type) : type(type) {}
 
 eventType Event::getEventType() {
     return this->type;
 }
 
-void Event::triggerEvent(eventType) {
-    switch(this->type) {
+void Event::triggerEvent(eventType newType) {
+    this->type = newType;
+    switch (this->type) {
     case treasureChest:
         break;
     case bladeOils:

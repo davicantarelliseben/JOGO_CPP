@@ -1,4 +1,4 @@
-#include "include/Inventory.h"
+#include "Inventory.h"
 #include <iostream>
 
 Inventory::Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon) : slots(slots) , slotsSize(slotsSize), bag(bag), weapon(weapon) {}

@@ -1,6 +1,8 @@
-#include "include/Character.h"
+#include "Character.h"
 
-Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed) : maxLife(mLife), currentLife(cLife), attack(atk), armor(armor), speed(speed) {}
+Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk,
+                     unsigned int armor, unsigned int speed)
+    : maxLife(mLife), currentLife(cLife), attack(atk), armor(armor), speed(speed) {}
 
 Character::~Character() {}
 
@@ -9,7 +11,10 @@ unsigned int Character::getMaxLife() {
 }
 
 void Character::setMaxLife(unsigned int valMaxLife) {
-    this-> maxLife = valMaxLife;
+    this->maxLife = valMaxLife;
+    if (this->currentLife > this->maxLife) {
+        this->currentLife = this->maxLife;
+    }
 }
 
 unsigned int Character::getCurrentLife() {
@@ -17,10 +22,10 @@ unsigned int Character::getCurrentLife() {
 }
 
 void Character::setCurrentLife(unsigned int valCurrentLife) {
-    if(valCurrentLife > this->maxLife){
+    if (valCurrentLife > this->maxLife) {
         this->currentLife = this->maxLife;
-    }else {
-    this-> currentLife = valCurrentLife;
+    } else {
+        this->currentLife = valCurrentLife;
     }
 }
 
@@ -49,18 +54,15 @@ void Character::setSpeed(unsigned int valSpeed) {
 }
 
 bool Character::isAlive() {
-    if(this->currentLife == 0) {
-        return 0;
-    }
-    return 1;
+    return this->currentLife > 0;
 }
 
 void Character::takeDamage(unsigned int& dmg) {
-    unsigned int damage = getAttack();
+    unsigned int damage = dmg;
 
-  if(damage >= this->currentLife){
-            this->currentLife = 0;
-    }else {
+    if (damage >= this->currentLife) {
+        this->currentLife = 0;
+    } else {
         this->currentLife -= damage;
     }
 }
