@@ -1,90 +1,108 @@
-#include "Inventory.h"
+#include "include/Inventory.h"
 #include <iostream>
 
-Inventory::Inventory(std::vector<Item> slots, unsigned int slotsSize, const Item& bag, const Item& weapon) 
-    : slots(slots), slotsSize(slotsSize), bag(bag), weapon(weapon) {}
+Inventory::Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon) : slots(slots) , slotsSize(slotsSize), bag(bag), weapon(weapon) {}
 
-bool Inventory::isFull() {
-    return slots.size() == slotsSize;
+// ----- Capacidade -----
+
+unsigned int Inventory::getMaxSlots() const {
+    return slotsSize;
 }
 
-void Inventory::printInventory() {
-    for(int i = 0; i < slots.size(); i++) {
-        const Item& temp = slots.at(i);
-        temp.printItem();
+bool Inventory::setMaxSlots(unsigned int novoTamanho) {
+    if(novoTamanho < slots.size()) {
+        return false; //não deixa diminuir e "sumir" com itens
     }
-}
-
-void Inventory::replaceItem(const Item& item) {
-    this->printInventory();
-    int indiceRemovido;
-    std::cout << "Escolha o item a ser removido: " << std::endl;
-    std::cin >> indiceRemovido;
-    // item = slots.at(indiceRemovido);
-}
-
-bool Inventory::addItem(const Item& item) {
-    if(this->isFull()) {
-        this->replaceItem(item);
-        return false;
-    }
-    this->slots.push_back(item);
+    slotsSize = novoTamanho;
     return true;
 }
 
-int Inventory::getBonusLife() const {
-    int addLife = 0;
-    for(int i = 0; i < slots.size(); i++) {
-        const Item& temp = slots.at(i);
-        addLife += temp.getLife();
-    }
-    return addLife;
+unsigned int Inventory::getItemCount() const {
+    return slots.size();
 }
 
-int Inventory::getAttack() const {
-    int addAttack = 0;
-
-    for(int i = 0; i < slots.size(); i++) {
-        const Item& temp = slots.at(i);
-        addAttack += temp.getAttack();
-    }
-    addAttack += this->weapon.getAttack();
-
-    if(this->weapon.hasAttackOil()) addAttack += 1;
-
-    return addAttack;
+bool Inventory::isFull() const {
+    return slots.size() >= slotsSize;
 }
 
-int Inventory::getArmor() const {
-    int addArmor = 0;
+// ----- colocar / tirar / trocar -----
 
-    for(int i = 0; i < slots.size(); i++) {
-        const Item& temp = slots.at(i);
-        addArmor += temp.getArmor();
+bool Inventory::addItem(const Item& item){
+    if(isFull()) {
+        return false; //quem chamou decide  : descartar ou usar replaceItem
     }
-    addArmor += this->weapon.getArmor();
-
-    if(this->weapon.hasArmorOil()) addArmor += 1;
-
-    return addArmor;
+    slots.push_back(item);
+    return true;
 }
 
-int Inventory::getSpeed() const {
-    int addSpeed = 0;
-
-    for(int i = 0; i < slots.size(); i++) {
-        const Item& temp = slots.at(i);
-        addSpeed += temp.getSpeed();
+bool Inventory::removeItem(unsigned int index, Item* removido){
+    if(index >= slots.size()){
+        return false;
     }
-    addSpeed += this->weapon.getSpeed();
-
-    if(this->weapon.hasSpeedOil()) addSpeed += 1;
-
-    return addSpeed;
+    if(removido != nullptr){
+        *removido = slots[index]; //remove o item tirado, se quiser usar (ex : vender)
+    }
+    slots.erase(slots.begin() + index);
+    return true;
 }
 
-void Inventory::equipWeapon(const Item& newWeapon) {
-    //remove o oleo antes de equipar a nova arma
-    this->weapon.setOil(0);
-    this->weapon = newWeapon;
+bool Inventory::replaceItem(unsigned int index, const Item& novo, Item* antigo){
+    if(index >= slots.size()){
+        return false;
+    }
+    if(antigo != nullptr) {
+        *antigo = slots[index];
+    }
+    slots[index] = novo;
+    return true;
+}
+
+Item* Inventory::getItem(unsigned int index) {
+    if(index >= slots.size()){
+        return nullptr;
+    }
+    return &slots[index];
+}
+
+void Inventory::printInventory() const {
+    std::cout << "Inventario (" << slots.size() << "/" << slotsSize << ")\n";
+    for (unsigned int i = 0; i < slots.size(); i++) {
+        Item temp = slots[i];
+        std::cout << " [" << i + 1 << "] " << "NAME = "<< temp.getName() << " | VIDA +" << temp.getLife() << " | ATK +" << temp.getAttack() << " | ARM +" << temp.getArmor() << " | SPD +" << temp.getSpeed() << "\n";
+
+    }
+}
+
+// ---------------- bonus ----------------
+ 
+unsigned int Inventory::getBonusLife() const {
+    unsigned int total = 0;
+    for (Item temp : slots){
+        total += temp.getLife();
+    }
+    return total;
+}
+ 
+unsigned int Inventory::getAttack() const {
+    unsigned int total = 0;
+    for (Item temp : slots){ 
+        total += temp.getAttack();
+    }
+        return total;
+}
+ 
+unsigned int Inventory::getArmor() const {
+    unsigned int total = 0;
+    for (Item temp : slots){
+        total += temp.getArmor();
+    }
+    return total;
+}
+ 
+unsigned int Inventory::getSpeed() const {
+    unsigned int total = 0;
+    for (Item temp : slots){ 
+        total += temp.getSpeed();
+    }
+    return total;
 }

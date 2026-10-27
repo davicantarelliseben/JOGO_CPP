@@ -1,40 +1,66 @@
-#include "Character.h"
+#include "include/Character.h"
 
-Character::Character(int mLife, int cLife, int atk, int armor, int speed) : maxLife(maxLife), currentLife(currentLife), attack(attack), armor(armor), speed(speed) {}
+Character::Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed) : maxLife(mLife), currentLife(cLife), attack(atk), armor(armor), speed(speed) {}
 
 Character::~Character() {}
 
-int Character::getMaxLife() {
+unsigned int Character::getMaxLife() {
     return this->maxLife;
 }
 
-int Character::getCurrentLife() {
+void Character::setMaxLife(unsigned int valMaxLife) {
+    this-> maxLife = valMaxLife;
+}
+
+unsigned int Character::getCurrentLife() {
     return this->currentLife;
 }
 
-int Character::getAttack() {
+void Character::setCurrentLife(unsigned int valCurrentLife) {
+    if(valCurrentLife > this->maxLife){
+        this->currentLife = this->maxLife;
+    }else {
+    this-> currentLife = valCurrentLife;
+    }
+}
+
+unsigned int Character::getAttack() {
     return this->attack;
 }
 
-int Character::getArmor() {
+void Character::setAttack(unsigned int valAttack) {
+    this->attack = valAttack;
+}
+
+unsigned int Character::getArmor() {
     return this->armor;
 }
 
-int Character::getSpeed() {
+void Character::setArmor(unsigned int valArmor) {
+    this->armor = valArmor;
+}
+
+unsigned int Character::getSpeed() {
     return this->speed;
 }
 
+void Character::setSpeed(unsigned int valSpeed) {
+    this->speed = valSpeed;
+}
+
 bool Character::isAlive() {
-    if(this->currentLife < 1) { //mudei a condição de ==0 pra < 1
+    if(this->currentLife == 0) {
         return 0;
     }
     return 1;
 }
 
-void Character::takeDamage(unsigned int damage) {
-    if(damage > this->currentLife) {
-        //alguma função do tipo kill()
-    } else {
+void Character::takeDamage(unsigned int& dmg) {
+    unsigned int damage = getAttack();
+
+  if(damage >= this->currentLife){
+            this->currentLife = 0;
+    }else {
         this->currentLife -= damage;
     }
 }
