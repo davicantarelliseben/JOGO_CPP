@@ -8,7 +8,7 @@ class Item {
         unsigned int life, attack, armor, speed;
     
     public:
-        Item(unsigned int life, unsigned int attack, unsigned int armor, unsigned int speed);
+        Item(std::string nome,unsigned int life, unsigned int attack, unsigned int armor, unsigned int speed);
         void printItem();
         std::string getName();
         unsigned int getLife();

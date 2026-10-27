@@ -16,7 +16,7 @@ void Enemy::Buff(enemyType type) {
         case BEAR:
 
             this->maxLife += 10;
-            this->attack += 1;
+            this->attack += 2;
             
             break;
 

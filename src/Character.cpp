@@ -55,11 +55,11 @@ bool Character::isAlive() {
     return 1;
 }
 
-void Character::takeDamage(Character& pp) {
-    unsigned int damage = pp.getAttack();
+void Character::takeDamage(unsigned int& dmg) {
+    unsigned int damage = getAttack();
 
-    if(damage >= this->currentLife){
-        this->currentLife = 0;
+  if(damage >= this->currentLife){
+            this->currentLife = 0;
     }else {
         this->currentLife -= damage;
     }

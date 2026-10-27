@@ -1,90 +1,112 @@
 #include "include/Battle.h"
-#include <vector>
+#include "include/Inventory.h"
 #include <iostream>
+#include <string>
+#include <algorithm>
+#include <thread>
+#include <chrono>
 
-Battle::Battle(Player* player, Enemy* enemy, unsigned int turno) : player(player), enemy(enemy), turno(1) {
-    //pensei em quando se constroi a batalha ela executa um metodo batalha para comecar a batalha e loudar a batalha em si
+// ---------------------------------------------------------------------------
+// Auxiliares internos da batalha (não precisam ir no Battle.h)
+// ---------------------------------------------------------------------------
+namespace {
+
+struct Lutador {
+    Character*   c;
+    std::string  nome;
+    unsigned int vidaMax;     // base + itens
+    unsigned int ataque;      // base + itens
+    unsigned int escudo;      // base + itens (gasta durante a luta, volta cheia na proxima)
+    unsigned int velocidade;  // base + itens
+};
+
+void pausa(int ms) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+void mostrarStatus(const Lutador& a, const Lutador& b) {
+    std::cout << "  " << a.nome << ": " << a.c->getCurrentLife() << "/" << a.vidaMax
+              << " HP | " << a.escudo << " ARM"
+              << "      " << b.nome << ": " << b.c->getCurrentLife() << "/" << b.vidaMax
+              << " HP | " << b.escudo << " ARM\n";
+}
 
-void Battle::battleGoing(){
+// Estilo He Is Coming: a armadura absorve o dano primeiro e é consumida,
+// o que sobrar vai para a vida.
+void atacar(Lutador& atk, Lutador& def) {
+    unsigned int dano      = atk.ataque;
+    unsigned int absorvido = std::min(dano, def.escudo);
+    def.escudo -= absorvido;
+    dano       -= absorvido;
 
-        //1)Aparecer em tela os elementos e stats 
+    def.c->takeDamage(dano);
 
-        //Turno :
-        unsigned int turno = turno;
+    std::cout << "  " << atk.nome << " ataca " << def.nome << ": "
+              << atk.ataque << " de dano";
+    if (absorvido > 0) std::cout << " (" << absorvido << " bloqueado pela armadura)";
+    std::cout << "\n";
+}
 
-        //atributos player :
-        unsigned int pML = player->getMaxLife();
-        unsigned int pCL = player->getCurrentLife();
-        unsigned int pATK = player->getAttack();
-        unsigned int pARM = player->getArmor();
-        unsigned int pSP = player->getSpeed();
+} // namespace
 
-        //atributos enemy :
+// ---------------------------------------------------------------------------
 
-        unsigned int eML = enemy->getMaxLife();
-        unsigned int eCL = enemy->getCurrentLife();
-        unsigned int eATK = enemy->getAttack();
-        unsigned int eARM = enemy->getArmor();
-        unsigned int eSP = enemy->getSpeed();
+Battle::Battle(Player* player, Enemy* enemy, unsigned int turno)
+    : player(player), enemy(enemy), turno(turno) {}
 
-        //Fila de prioridade :
-        std::vector<Character> charactersTurns;
-        
-        if(player->getSpeed() >= enemy->getSpeed()){
-            charactersTurns.push_back(*player);
-            charactersTurns.push_back(*enemy);
-        }else {
-            charactersTurns.push_back(*enemy);
-            charactersTurns.push_back(*player); 
-        }
+void Battle::battleGoing() {
+    const unsigned int LIMITE_TURNOS = 100;   // evita loop infinito (ex.: ninguém tem ataque)
 
-        Character firstCha = charactersTurns[0];
-        Character secondCha = charactersTurns[1];
+    // 1) Monta os lutadores com PONTEIROS (nada de copiar o objeto!)
+    Lutador p{player, "Jogador",
+              player->getTotalMaxLife(), player->getTotalAttack(),
+              player->getTotalArmor(),   player->getTotalSpeed()};
 
-        //2) Puxar todos os buffs dos itens 
+    Lutador e{enemy, "Inimigo",
+              enemy->getMaxLife(), enemy->getAttack(),
+              enemy->getArmor(),   enemy->getSpeed()};
 
+    // 2) Quem tem mais velocidade ataca primeiro (empate = jogador)
+    Lutador* primeiro = (p.velocidade >= e.velocidade) ? &p : &e;
+    Lutador* segundo  = (primeiro == &p) ? &e : &p;
 
-        std::cout << firstCha.getAttack() << " " << secondCha.getAttack() << std::endl;
-    //depois fazer a implementação da tela (como faremos não tenho menor ideia)
-    do{
+    // TODO: aqui entram os efeitos de "início de batalha" dos itens
 
-        secondCha.takeDamage(firstCha);
-        isBattleOver();
-        firstCha.takeDamage(secondCha);
-        isBattleOver();
+    std::cout << "\n=== BATALHA! " << primeiro->nome << " e mais rapido e comeca ===\n";
+    mostrarStatus(p, e);
+
+    // 3) Loop automático: ninguém escolhe nada, cada um ataca no seu turno
+    while (isBattleOver() == 0 && turno <= LIMITE_TURNOS) {
+        std::cout << "\n--- Turno " << turno << " ---\n";
+
+        atacar(*primeiro, *segundo);
+        pausa(500);
+        if (isBattleOver() != 0) break;      // morto não revida
+
+        atacar(*segundo, *primeiro);
+        pausa(500);
+
+        mostrarStatus(p, e);
         nextTurn();
-        //2) Começa o turno e quem vier primeiro ataca e sege
+    }
 
-    }while(isBattleOver() == 0);
-    
-    if(isBattleOver() == 1){std::cout << "Player venceu !!"<< std::endl;}
-    else if(isBattleOver() == 2){std::cout << "inimigo venceu !!"<< std::endl;}
-
-    //Vai ter uma funcão de go back pra tela de exploração
-
+    // 4) Resultado
+    mostrarStatus(p, e);
+    switch (isBattleOver()) {
+        case 1:  std::cout << "Jogador venceu!!\n"; break;
+        case 2:  std::cout << "Inimigo venceu!!\n"; break;
+        default: std::cout << "Empate (limite de turnos)\n"; break;
+    }
 }
-
-
 
 void Battle::nextTurn() {
     this->turno++;
 }
 
+// 0 = continua | 1 = jogador venceu | 2 = inimigo venceu
 int Battle::isBattleOver() {
-    if(player->getCurrentLife() <= 0 && enemy->getCurrentLife() <= 0) {
-        //Player venceu
-        return 1;
-    } else if(enemy->getCurrentLife() <= 0 && player->getCurrentLife() > 0){
-        //Enemy venceu
-        return 2;
-    }else{
-        //Nenhum no turno ganhou logo continuar
-        return 0;
-    }
+    if (player->getCurrentLife() == 0) return 2;
+    if (enemy->getCurrentLife()  == 0) return 1;
+    return 0;
 }
 
-void Battle::calcDamage() {
-    
-}

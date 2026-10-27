@@ -1,9 +1,10 @@
 #include <Item.h>
 #include <iostream>
 
-Item::Item(unsigned int life, unsigned int attack, unsigned int armor, unsigned int speed) : life(life), attack(attack), armor(armor), speed(speed) {}
+Item::Item(std::string nome,unsigned int life, unsigned int attack, unsigned int armor, unsigned int speed) : name(nome), life(life), attack(attack), armor(armor), speed(speed) {}
 
 void Item::printItem() {
+    std::cout << name << std::endl;
     std::cout << life << std::endl;
     std::cout << attack << std::endl;
     std::cout << armor << std::endl;
