@@ -7,7 +7,7 @@
 #include <chrono>
 
 // ---------------------------------------------------------------------------
-// Auxiliares internos da batalha (não precisam ir no Battle.h)
+// Auxiliares internos da batalha 
 // ---------------------------------------------------------------------------
 namespace {
 
