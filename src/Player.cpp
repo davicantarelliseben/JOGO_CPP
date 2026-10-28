@@ -44,9 +44,9 @@ bool Player::removeItem(unsigned int index) {
     return true;
 }
 
-bool Player::replaceItem(unsigned int index, const Item& novo) {
+bool Player::replaceItem(unsigned int index , const Item& novo) {
     Item antigo(0, "", "", 0, 0, 0, 0);
-    if (!inventory.replaceItem(index, novo, &antigo)) {
+    if (!inventory.replaceItem(index , novo, &antigo)) {
         return false;
     }
 

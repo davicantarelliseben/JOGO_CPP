@@ -1,4 +1,4 @@
-#include "Inventory.h"
+#include "include/Inventory.h"
 #include <iostream>
 
 Inventory::Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon) : slots(slots) , slotsSize(slotsSize), bag(bag), weapon(weapon) {}
@@ -46,7 +46,7 @@ bool Inventory::removeItem(unsigned int index, Item* removido){
     return true;
 }
 
-bool Inventory::replaceItem(unsigned int index, const Item& novo, Item* antigo){
+bool Inventory::replaceItem(unsigned int index, const Item& novo, Item* antigo){// REFATORAR ESSA POHA
     if(index >= slots.size()){
         return false;
     }

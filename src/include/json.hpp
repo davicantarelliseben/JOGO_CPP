@@ -778,7 +778,9 @@ NLOHMANN_JSON_NAMESPACE_END
 #endif
 
 #if defined(JSON_HEDLEY_PELLES_VERSION)
-    #undef JSON_HEDLEY_PELLES_VERSION
+    #undef JSON_HEDLEY_P[3] fazer persistir o mapa
+[4] tentar criar movimentação por matriz
+[5] fazer o jogo via terminalELLES_VERSION
 #endif
 #if defined(__POCC__)
     #define JSON_HEDLEY_PELLES_VERSION JSON_HEDLEY_VERSION_ENCODE(__POCC__ / 100, __POCC__ % 100, 0)

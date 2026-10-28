@@ -10,8 +10,13 @@ void Event::triggerEvent(eventType newType) {
     this->type = newType;
     switch (this->type) {
     case treasureChest:
-        break;
+        //roleta a raridade 
+        //mostrar 3 itens distintos 
+        //jogador escolhe 1 e é adicionado no seu inventario 
+        //if(inventario cheio),troca o item por outro
+    break;
     case bladeOils:
+    
         break;
     case campfire:
         break;
