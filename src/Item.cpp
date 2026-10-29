@@ -46,10 +46,10 @@ void Item::clearOils() {
     this->speedOil  = false;
 }
 
-void Item::setOil(int opt) {
+bool Item::setOil(int opt) {
     if (opt == 0) {
         clearOils();
-        return;
+        return true;
     }
-    applyOil(opt);
+    return applyOil(opt);
 }

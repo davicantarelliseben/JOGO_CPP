@@ -7,12 +7,10 @@ class Inventory {
     private:
         std::vector<Item> slots; // itens guardados 
         int slotsSize;           // capacidade maxima
-        Item* bag;
-        Item* weapon;
         int weaponSlotIndex = -1; // rastreia o indice da arma para evitar ponteiro pendente
     
     public:
-        Inventory(std::vector<Item> slots = {}, int slotsSize = 6, Item* bag = nullptr, Item* weapon = nullptr);
+        Inventory(std::vector<Item> slots = {}, int slotsSize = 6);
         
         // --- Capacidade --- 
         int getMaxSlots() const;
@@ -29,7 +27,6 @@ class Inventory {
         const Item* getItem(int index) const;
 
         const std::vector<Item>& getSlots() const { return slots; }
-        std::vector<Item>& getSlots() { return slots; }
 
         // --- Arma atual (weapon) ---
         Item* getWeapon();

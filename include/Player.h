@@ -11,7 +11,7 @@ private:
     int coins;
     Inventory inventory;
 
-    void ajustarVida();
+    void ajustarVida(long long vida);
 
 public:
     Player(std::string nome, int maxLife, int currentLife, int attack, int armor, int speed, int coins, Inventory inventory);
@@ -19,21 +19,20 @@ public:
 
     // --- inventario ---
     const Inventory& getInventory() const;
-    Inventory& getInventory();
     void setInventory(const Inventory& novo);
     bool addItem(const Item& item);
     bool removeItem(int index);
     bool replaceItem(int index, const Item& novo);
-    Item* getItem(int index);
+    const Item* getItem(int index) const;
 
     // --- arma atual ---
-    Item* getWeapon();
     const Item* getWeapon() const;
+    bool applyWeaponOil(int option);
     void setWeapon(Item* w);
     bool equipWeapon(int slotIndex);
 
     // --- Player nome ---
-    std::string getName();
+    std::string getName() const;
     // --- atributos totais (base + itens) ---
     int getTotalMaxLife() const;
     int getTotalAttack() const;
@@ -53,6 +52,7 @@ public:
     bool spendCoins(int valor);
 
     // --- incrementos nos atributos base ---
+    void setCurrentLife(int valor);
     void addMaxLife(int val);
     void addAttack(int val);
     void addArmor(int val);

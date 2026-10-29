@@ -1,17 +1,29 @@
 #include "Inventory.h"
 #include "GameItemException.h"
+#include <algorithm>
 #include <iostream>
+#include <limits>
+#include <stdexcept>
 
-Inventory::Inventory(std::vector<Item> slots, int slotsSize, Item* bag, Item* weapon)
-    : slots(slots), slotsSize(slotsSize), bag(bag), weapon(weapon), weaponSlotIndex(-1) {
-    if (weapon != nullptr) {
-        int count = slots.size();
-        for (int i = 0; i < count; ++i) {
-            if (&slots[i] == weapon) {
-                weaponSlotIndex = i;
-                break;
-            }
-        }
+namespace {
+
+template <typename Getter>
+int somarBonus(const std::vector<Item>& slots, Getter getter) {
+    long long total = 0;
+    for (const Item& item : slots) {
+        total += getter(item);
+    }
+    return static_cast<int>(std::max(
+        static_cast<long long>(std::numeric_limits<int>::min()),
+        std::min(total, static_cast<long long>(std::numeric_limits<int>::max()))));
+}
+
+}
+
+Inventory::Inventory(std::vector<Item> slots, int slotsSize)
+    : slots(slots), slotsSize(slotsSize), weaponSlotIndex(-1) {
+    if (slotsSize < 0 || slots.size() > static_cast<std::size_t>(slotsSize)) {
+        throw std::invalid_argument("A capacidade do inventario deve ser nao negativa e comportar os itens.");
     }
 }
 
@@ -22,8 +34,7 @@ int Inventory::getMaxSlots() const {
 }
 
 bool Inventory::setMaxSlots(int novoTamanho) {
-    int count = slots.size();
-    if (novoTamanho < count) {
+    if (novoTamanho < 0 || static_cast<std::size_t>(novoTamanho) < slots.size()) {
         return false;
     }
     slotsSize = novoTamanho;
@@ -50,21 +61,15 @@ bool Inventory::addItem(const Item& item) {
         return false;
     }
     slots.push_back(item);
-    int count = slots.size();
-    if (weaponSlotIndex >= 0 && weaponSlotIndex < count) {
-        weapon = &slots[weaponSlotIndex];
-    }
     return true;
 }
 
 bool Inventory::removeItem(int index, Item* removido) {
-    int count = slots.size();
-    if (index < 0 || index >= count) {
+    if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) {
         return false;
     }
     if (weaponSlotIndex == index) {
-        if (weapon != nullptr) weapon->clearOils();
-        weapon = nullptr;
+        slots[index].clearOils();
         weaponSlotIndex = -1;
     } else if (weaponSlotIndex > index) {
         weaponSlotIndex--;
@@ -75,16 +80,11 @@ bool Inventory::removeItem(int index, Item* removido) {
     }
     slots.erase(slots.begin() + index);
 
-    count = slots.size();
-    if (weaponSlotIndex >= 0 && weaponSlotIndex < count) {
-        weapon = &slots[weaponSlotIndex];
-    }
     return true;
 }
 
 bool Inventory::replaceItem(int index, const Item& novo, Item* antigo) {
-    int count = slots.size();
-    if (index < 0 || index >= count) {
+    if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) {
         return false;
     }
     if (antigo != nullptr) {
@@ -94,22 +94,19 @@ bool Inventory::replaceItem(int index, const Item& novo, Item* antigo) {
 
     if (weaponSlotIndex == index) {
         slots[index].clearOils();
-        weapon = &slots[index];
     }
     return true;
 }
 
 Item* Inventory::getItem(int index) {
-    int count = slots.size();
-    if (index < 0 || index >= count) {
+    if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) {
         return nullptr;
     }
     return &slots[index];
 }
 
 const Item* Inventory::getItem(int index) const {
-    int count = slots.size();
-    if (index < 0 || index >= count) {
+    if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) {
         return nullptr;
     }
     return &slots[index];
@@ -118,56 +115,53 @@ const Item* Inventory::getItem(int index) const {
 // ----- Arma Atual (Weapon) -----
 
 Item* Inventory::getWeapon() {
-    int count = slots.size();
-    if (weaponSlotIndex >= 0 && weaponSlotIndex < count) {
-        weapon = &slots[weaponSlotIndex];
-    }
-    return weapon;
+    return weaponSlotIndex >= 0
+        ? &slots[static_cast<std::size_t>(weaponSlotIndex)]
+        : nullptr;
 }
 
 const Item* Inventory::getWeapon() const {
-    int count = slots.size();
-    if (weaponSlotIndex >= 0 && weaponSlotIndex < count) {
-        return &slots[weaponSlotIndex];
-    }
-    return weapon;
+    return weaponSlotIndex >= 0
+        ? &slots[static_cast<std::size_t>(weaponSlotIndex)]
+        : nullptr;
 }
 
 void Inventory::setWeapon(Item* newWeapon) {
-    if (this->weapon != nullptr && this->weapon != newWeapon) {
-        this->weapon->clearOils();
-    }
-
-    this->weapon = newWeapon;
-    this->weaponSlotIndex = -1;
-
-    if (this->weapon != nullptr) {
-        this->weapon->clearOils();
-        int count = slots.size();
-        for (int i = 0; i < count; ++i) {
+    int novoIndice = -1;
+    if (newWeapon != nullptr) {
+        for (std::size_t i = 0; i < slots.size(); ++i) {
             if (&slots[i] == newWeapon) {
-                this->weaponSlotIndex = i;
+                novoIndice = static_cast<int>(i);
                 break;
             }
         }
+        if (novoIndice < 0) {
+            throw GameItemException("A arma precisa pertencer ao inventario.");
+        }
+    }
+
+    if (novoIndice == weaponSlotIndex) return;
+    if (weaponSlotIndex >= 0) {
+        slots[static_cast<std::size_t>(weaponSlotIndex)].clearOils();
+    }
+    weaponSlotIndex = novoIndice;
+    if (weaponSlotIndex >= 0) {
+        slots[static_cast<std::size_t>(weaponSlotIndex)].clearOils();
     }
 }
 
 bool Inventory::equipWeapon(int slotIndex) {
-    int count = slots.size();
-    if (slotIndex < 0 || slotIndex >= count) {
+    if (slotIndex < 0 || static_cast<std::size_t>(slotIndex) >= slots.size()) {
         throw GameItemException("Indice de slot invalido para equipar arma!");
     }
 
-    if (weaponSlotIndex >= 0 && weaponSlotIndex < count) {
-        slots[weaponSlotIndex].clearOils();
-    } else if (weapon != nullptr) {
-        weapon->clearOils();
-    }
+    if (weaponSlotIndex == slotIndex) return true;
 
+    if (weaponSlotIndex >= 0) {
+        slots[static_cast<std::size_t>(weaponSlotIndex)].clearOils();
+    }
     weaponSlotIndex = slotIndex;
-    weapon = &slots[slotIndex];
-    weapon->clearOils();
+    slots[static_cast<std::size_t>(weaponSlotIndex)].clearOils();
 
     return true;
 }
@@ -199,33 +193,17 @@ void Inventory::printInventory() const {
 // ---------------- bonus ----------------
  
 int Inventory::getBonusLife() const {
-    int total = 0;
-    for (const Item& temp : slots) {
-        total += temp.getLife();
-    }
-    return total;
+    return somarBonus(slots, [](const Item& item) { return item.getLife(); });
 }
  
 int Inventory::getAttack() const {
-    int total = 0;
-    for (const Item& temp : slots) { 
-        total += temp.getAttack();
-    }
-    return total;
+    return somarBonus(slots, [](const Item& item) { return item.getAttack(); });
 }
  
 int Inventory::getArmor() const {
-    int total = 0;
-    for (const Item& temp : slots) {
-        total += temp.getArmor();
-    }
-    return total;
+    return somarBonus(slots, [](const Item& item) { return item.getArmor(); });
 }
  
 int Inventory::getSpeed() const {
-    int total = 0;
-    for (const Item& temp : slots) { 
-        total += temp.getSpeed();
-    }
-    return total;
+    return somarBonus(slots, [](const Item& item) { return item.getSpeed(); });
 }

@@ -37,7 +37,7 @@ public:
 
     // Aplica um oleo na arma; nao permite repetir o mesmo oleo
     bool applyOil(int opt);
-    void setOil(int opt);
+    bool setOil(int opt);
     void clearOils();
 
     void setName(const std::string& newName) { name = newName; }

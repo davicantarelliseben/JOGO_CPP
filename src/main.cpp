@@ -15,7 +15,7 @@ int main() {
     }
 
     // Criando jogador inicial com 30 moedas e 6 slots de inventario
-    Inventory inventario({}, 6, nullptr, nullptr);
+    Inventory inventario({}, 6);
     Player player("Guerreiro", 30, 20, 5, 2, 3, 30, inventario);
 
     // Equipando uma espada inicial na posicao 0

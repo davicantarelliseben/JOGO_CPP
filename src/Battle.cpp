@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <thread>
 #include <chrono>
+#include <stdexcept>
 
 namespace {
 
@@ -13,7 +14,7 @@ struct Lutador {
     std::string nome;
     int vidaMax;
     int ataque;
-    int escudo;
+    int armadura;
     int velocidade;
 };
 
@@ -21,66 +22,72 @@ void pausa(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+Lutador criarLutador(Player* player) {
+    return {player, player->getName(), player->getTotalMaxLife(),
+            player->getTotalAttack(), player->getTotalArmor(),
+            player->getTotalSpeed()};
+}
+
+Lutador criarLutador(Enemy* enemy) {
+    return {enemy, "Inimigo", enemy->getMaxLife(), enemy->getAttack(),
+            enemy->getArmor(), enemy->getSpeed()};
+}
+
 void mostrarStatus(const Lutador& a, const Lutador& b) {
     std::cout << "  " << a.nome << ": " << a.c->getCurrentLife() << "/" << a.vidaMax
-              << " HP | " << a.escudo << " ARM"
+              << " HP | " << a.armadura << " ARM"
               << "      " << b.nome << ": " << b.c->getCurrentLife() << "/" << b.vidaMax
-              << " HP | " << b.escudo << " ARM\n";
+              << " HP | " << b.armadura << " ARM\n";
 }
 
 void atacar(Lutador& atk, Lutador& def) {
-    int dano = atk.ataque;
-    int absorvido = std::min(dano, def.escudo);
-    def.escudo -= absorvido;
-    dano -= absorvido;
+    const int ataque = std::max(0, atk.ataque);
+    const int armadura = std::max(0, def.armadura);
+    const int dano = std::max(0, ataque - armadura);
+    const int absorvido = ataque - dano;
 
     def.c->takeDamage(dano);
 
     std::cout << "  " << atk.nome << " ataca " << def.nome << ": "
-              << atk.ataque << " de dano";
-    if (absorvido > 0) std::cout << " (" << absorvido << " bloqueado pela armadura)";
+              << dano << " de dano";
+    if (absorvido > 0) std::cout << " (" << absorvido << " absorvido pela armadura)";
     std::cout << "\n";
 }
 
 } // namespace
 
 Battle::Battle(Player* player, Enemy* enemy, int turno)
-    : turno(turno), player(player), enemy(enemy) {}
+    : turno(turno), player(player), enemy(enemy) {
+    if (player == nullptr || enemy == nullptr) {
+        throw std::invalid_argument("Uma batalha precisa de um jogador e um inimigo validos.");
+    }
+}
 
 void Battle::battleGoing() {
     const int LIMITE_TURNOS = 100;
 
-    Lutador p{player, "Jogador",
-              player->getTotalMaxLife(), player->getTotalAttack(),
-              player->getTotalArmor(),   player->getTotalSpeed()};
+    Lutador p = criarLutador(player);
+    Lutador e = criarLutador(enemy);
+    const bool jogadorComeca = p.velocidade >= e.velocidade;
 
-    Lutador e{enemy, "Inimigo",
-              enemy->getMaxLife(), enemy->getAttack(),
-              enemy->getArmor(),   enemy->getSpeed()};
-
-    Lutador* primeiro = (p.velocidade >= e.velocidade) ? &p : &e;
-    Lutador* segundo  = (primeiro == &p) ? &e : &p;
-
-    std::cout << "\n=== BATALHA! " << primeiro->nome << " e mais rapido e comeca ===\n";
+    std::cout << "\n=== BATALHA! "
+              << (jogadorComeca ? p.nome : e.nome)
+              << " e mais rapido e comeca ===\n";
     mostrarStatus(p, e);
 
     while (isBattleOver() == 0 && turno <= LIMITE_TURNOS) {
         std::cout << "\n--- Turno " << turno << " ---\n";
 
-        atacar(*primeiro, *segundo);
+        calcDamage();
         pausa(500);
-        if (isBattleOver() != 0) break;
-
-        atacar(*segundo, *primeiro);
-        pausa(500);
-
         mostrarStatus(p, e);
+        if (isBattleOver() != 0) break;
         nextTurn();
     }
 
     mostrarStatus(p, e);
     switch (isBattleOver()) {
-        case 1:  std::cout << "Jogador venceu!!\n"; break;
+        case 1:  std::cout << p.nome << " venceu!!\n"; break;
         case 2:  std::cout << "Inimigo venceu!!\n"; break;
         default: std::cout << "Empate (limite de turnos)\n"; break;
     }
@@ -91,26 +98,19 @@ void Battle::nextTurn() {
 }
 
 void Battle::calcDamage() {
-    if (player == nullptr || enemy == nullptr) return;
+    Lutador p = criarLutador(player);
+    Lutador e = criarLutador(enemy);
+    Lutador* primeiro = (p.velocidade >= e.velocidade) ? &p : &e;
+    Lutador* segundo = (primeiro == &p) ? &e : &p;
 
-    int danoJogador = player->getTotalAttack();
-    int danoInimigo = enemy->getAttack();
-
-    int defesaJogador = player->getTotalArmor();
-    int defesaInimigo = enemy->getArmor();
-
-    danoJogador = std::max(0, danoJogador - defesaInimigo);
-    danoInimigo = std::max(0, danoInimigo - defesaJogador);
-
-    int vidaJogador = std::max(0, player->getCurrentLife() - danoInimigo);
-    int vidaInimigo = std::max(0, enemy->getCurrentLife() - danoJogador);
-
-    player->setCurrentLife(vidaJogador);
-    enemy->setCurrentLife(vidaInimigo);
+    atacar(*primeiro, *segundo);
+    if (isBattleOver() == 0) {
+        atacar(*segundo, *primeiro);
+    }
 }
 
 int Battle::isBattleOver() {
-    if (player->getCurrentLife() == 0) return 2;
-    if (enemy->getCurrentLife() == 0) return 1;
+    if (!player->isAlive()) return 2;
+    if (!enemy->isAlive()) return 1;
     return 0;
 }

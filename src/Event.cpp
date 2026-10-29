@@ -156,11 +156,12 @@ void Event::handleTreasureChest() {
             bool substituiu = false;
             int itemCount = player->getInventory().getItemCount();
             for (int i = 0; i < itemCount; ++i) {
-                Item* atual = player->getItem(i);
+                const Item* atual = player->getItem(i);
                 if (atual != nullptr && atual->getAttack() < itemEscolhido.getAttack()) {
+                    const std::string nomeSubstituido = atual->getName();
                     player->replaceItem(i, itemEscolhido);
                     substituiu = true;
-                    std::cout << ">> '" << atual->getName() << "' foi substituido por '" << itemEscolhido.getName() << "'!\n";
+                    std::cout << ">> '" << nomeSubstituido << "' foi substituido por '" << itemEscolhido.getName() << "'!\n";
                     break;
                 }
             }
@@ -187,11 +188,11 @@ void Event::handleBladeOils() {
             throw GameItemException("Jogador invalido no evento Oleos de Lamina!");
         }
 
-        Item* arma = player->getWeapon();
+        const Item* arma = player->getWeapon();
         if (arma == nullptr) {
             int itemCount = player->getInventory().getItemCount();
             for (int i = 0; i < itemCount; ++i) {
-                Item* it = player->getItem(i);
+                const Item* it = player->getItem(i);
                 if (it != nullptr && it->getAttack() > 0) {
                     player->equipWeapon(i);
                     arma = player->getWeapon();
@@ -264,7 +265,7 @@ void Event::handleBladeOils() {
             std::cout << ">> Escolha do oleo: [" << escolhaOleo << "] " << getNomeOleo(escolhaOleo) << "\n";
         }
 
-        if (!arma->applyOil(escolhaOleo)) {
+        if (!player->applyWeaponOil(escolhaOleo)) {
             throw GameItemException("Falha ao aplicar oleo na arma atual!");
         }
 
@@ -427,12 +428,12 @@ void Event::handleTravellingMerchant() {
 
         struct OfertaMercador {
             Item item;
-            unsigned int preco;
+            int preco;
         };
 
         std::vector<OfertaMercador> ofertas;
 
-        auto montarOfertas = [&](const std::string& raridade, int quantidade, unsigned int preco) {
+        auto montarOfertas = [&](const std::string& raridade, int quantidade, int preco) {
             std::vector<Item> itens = itemManager->getDistinctItemsByRarity(raridade, quantidade);
             for (const auto& it : itens) {
                 ofertas.push_back({it, preco});
