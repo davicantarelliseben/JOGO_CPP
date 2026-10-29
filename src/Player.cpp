@@ -47,7 +47,7 @@ bool Player::removeItem(int index) {
 }
 
 bool Player::replaceItem(int index, const Item& novo) {
-    Item antigo(0, "", "", 0, 0, 0, 0);
+    Item antigo;
     if (!inventory.replaceItem(index, novo, &antigo)) {
         return false;
     }
