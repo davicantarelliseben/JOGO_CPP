@@ -3,27 +3,27 @@
 class Character {
 
     protected:
-        unsigned int maxLife, currentLife, attack, armor, speed;
+        int maxLife, currentLife, attack, armor, speed;
 
     public:
-        Character(unsigned int mLife, unsigned int cLife, unsigned int atk, unsigned int armor, unsigned int speed);
-        ~Character();
+        Character(int mLife, int cLife, int atk, int armor, int speed);
+        virtual ~Character();
         
-        unsigned int getMaxLife();
-        void setMaxLife(unsigned int valMaxLife);
+        int getMaxLife() const;
+        void setMaxLife(int valMaxLife);
 
-        unsigned int getCurrentLife();
-        void setCurrentLife(unsigned int valCurrentLife);
+        int getCurrentLife() const;
+        void setCurrentLife(int valCurrentLife);
 
-        unsigned int getAttack();
-        void setAttack(unsigned int valAttack);
+        int getAttack() const;
+        void setAttack(int valAttack);
 
-        unsigned int getArmor();
-        void setArmor(unsigned int valArmor);
+        int getArmor() const;
+        void setArmor(int valArmor);
 
-        unsigned int getSpeed();
-        void setSpeed(unsigned int valSpeed);
+        int getSpeed() const;
+        void setSpeed(int valSpeed);
         
-        bool isAlive();
-        void takeDamage(unsigned int& dmg);
+        bool isAlive() const;
+        void takeDamage(int dmg);
 };

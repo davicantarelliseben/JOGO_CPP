@@ -13,21 +13,43 @@ void Item::printItem() const {
 
     if (attackOil || armorOil || speedOil) {
         std::cout << "Applied Oil: ";
-        if (attackOil) std::cout << "[Attack Oil (+1)]" << std::endl;
-        if (armorOil)  std::cout << "[Armor Oil (+1)]" << std::endl;
-        if (speedOil)  std::cout << "[Speed Oil (+1)]" << std::endl;
+        if (attackOil) std::cout << "[Attack Oil (+1)] ";
+        if (armorOil)  std::cout << "[Armor Oil (+1)] ";
+        if (speedOil)  std::cout << "[Speed Oil (+1)] ";
+        std::cout << std::endl;
     }
     std::cout << "-----------------------" << std::endl;
 }
 
+bool Item::applyOil(int opt) {
+    if (opt == 1) {
+        if (this->attackOil) return false; // Nao pode repetir o mesmo oleo
+        this->attackOil = true;
+        return true;
+    }
+    if (opt == 2) {
+        if (this->armorOil) return false; // Nao pode repetir o mesmo oleo
+        this->armorOil = true;
+        return true;
+    }
+    if (opt == 3) {
+        if (this->speedOil) return false; // Nao pode repetir o mesmo oleo
+        this->speedOil = true;
+        return true;
+    }
+    return false;
+}
+
+void Item::clearOils() {
+    this->attackOil = false;
+    this->armorOil  = false;
+    this->speedOil  = false;
+}
+
 void Item::setOil(int opt) {
     if (opt == 0) {
-        this->attackOil = false;
-        this->armorOil = false;
-        this->speedOil = false;
+        clearOils();
         return;
     }
-    this->attackOil = (opt == 1);
-    this->armorOil  = (opt == 2);
-    this->speedOil  = (opt == 3);
+    applyOil(opt);
 }

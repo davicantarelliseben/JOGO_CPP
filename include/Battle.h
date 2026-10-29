@@ -4,12 +4,12 @@
 
 class Battle {
 private:
-    unsigned int turno;
+    int turno;
     Player* player;
     Enemy* enemy;
 
 public:
-    Battle(Player* player, Enemy* enemy, unsigned int turno);
+    Battle(Player* player, Enemy* enemy, int turno = 1);
     void nextTurn();
     int isBattleOver();
     void calcDamage();

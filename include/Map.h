@@ -4,13 +4,18 @@
 
 class Map {
 private:
-    unsigned int stepsCounter;
+    int stepsCounter;
     bool day;
     std::vector<std::vector<Tiles>> grid;
 
 public:
-    Map(unsigned int stepsCounter = 30, bool day = true);
+    Map(int stepsCounter = 30, bool day = true);
     void cycleDay();
     int getSteps();
-    unsigned int countStep();
+    int countStep();
+
+    bool isDay() const;
+    void addSteps(int val);
+    void setSteps(int val);
+    void revealAroundPlayer(int radius = 3);
 };

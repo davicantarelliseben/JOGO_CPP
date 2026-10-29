@@ -13,4 +13,9 @@ public:
     bool isWalkable();
     bool isBattle();
     bool isEvent();
+
+    Event* getEvent();
+    Battle* getBattle();
+    void setEvent(Event* newEvent);
+    void setBattle(Battle* newBattle);
 };

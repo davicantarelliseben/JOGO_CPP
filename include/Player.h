@@ -3,42 +3,60 @@
 
 #include "Character.h"
 #include "Inventory.h"
+#include <string>
 
 class Player : public Character {
 private:
     std::string name;
-    unsigned int coins;
+    int coins;
     Inventory inventory;
 
-    void ajustarVida();   // garante que a vida atual nao passe do maximo total
+    void ajustarVida();
 
 public:
-    Player(std::string nome,unsigned int maxLife, unsigned int currentLife, unsigned int attack, unsigned int armor, unsigned int speed, unsigned int coins, Inventory inventory);
-    ~Player();
+    Player(std::string nome, int maxLife, int currentLife, int attack, int armor, int speed, int coins, Inventory inventory);
+    ~Player() override;
 
     // --- inventario ---
-    const Inventory& getInventory() const;        // so leitura
+    const Inventory& getInventory() const;
+    Inventory& getInventory();
     void setInventory(const Inventory& novo);
     bool addItem(const Item& item);
-    bool removeItem(unsigned int index);
-    bool replaceItem(unsigned int index, const Item& novo);
+    bool removeItem(int index);
+    bool replaceItem(int index, const Item& novo);
+    Item* getItem(int index);
+
+    // --- arma atual ---
+    Item* getWeapon();
+    const Item* getWeapon() const;
+    void setWeapon(Item* w);
+    bool equipWeapon(int slotIndex);
 
     // --- Player nome ---
     std::string getName();
     // --- atributos totais (base + itens) ---
-    unsigned int getTotalMaxLife() const;
-    unsigned int getTotalAttack() const;
-    unsigned int getTotalArmor() const;
-    unsigned int getTotalSpeed() const;
+    int getTotalMaxLife() const;
+    int getTotalAttack() const;
+    int getTotalArmor() const;
+    int getTotalSpeed() const;
 
-    void heal(unsigned int quantidade);
+    void heal(int quantidade);
     void fullHeal();
 
     void printStats();
     void printInventory();
 
-    unsigned int getCoins() const;
-    void setCoins(unsigned int valor);
+    // --- moedas ---
+    int getCoins() const;
+    void setCoins(int valor);
+    void addCoins(int valor);
+    bool spendCoins(int valor);
+
+    // --- incrementos nos atributos base ---
+    void addMaxLife(int val);
+    void addAttack(int val);
+    void addArmor(int val);
+    void addSpeed(int val);
 };
 
 #endif

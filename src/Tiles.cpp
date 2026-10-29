@@ -14,3 +14,19 @@ bool Tiles::isBattle() {
 bool Tiles::isEvent() {
     return event != nullptr;
 }
+
+Event* Tiles::getEvent() {
+    return event;
+}
+
+Battle* Tiles::getBattle() {
+    return battle;
+}
+
+void Tiles::setEvent(Event* newEvent) {
+    event = newEvent;
+}
+
+void Tiles::setBattle(Battle* newBattle) {
+    battle = newBattle;
+}

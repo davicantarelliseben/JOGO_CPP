@@ -5,33 +5,44 @@
 class Inventory {
 
     private:
-        std::vector<Item> slots; // itens  guardados 
-        unsigned int slotsSize;  // capacidade maxima
+        std::vector<Item> slots; // itens guardados 
+        int slotsSize;           // capacidade maxima
         Item* bag;
         Item* weapon;
+        int weaponSlotIndex = -1; // rastreia o indice da arma para evitar ponteiro pendente
     
     public:
-        Inventory(std::vector<Item> slots, unsigned int slotsSize, Item* bag, Item* weapon);
+        Inventory(std::vector<Item> slots = {}, int slotsSize = 6, Item* bag = nullptr, Item* weapon = nullptr);
         
         // --- Capacidade --- 
-        unsigned int getMaxSlots() const; //Retorna a quantidade maxima de slots do inventario
-        bool setMaxSlots(unsigned int novoTamanho); //Modificador da quantidade maxima de slots no inventario
-        unsigned int getItemCount() const; // retorna a quantidade de itens na bolsa
-        bool isFull() const; //Retorna se o inventário está cheio ou não
-        bool isEmpty() const; //Retorna se o inventário está vazio ou não
+        int getMaxSlots() const;
+        bool setMaxSlots(int novoTamanho);
+        int getItemCount() const;
+        bool isFull() const;
+        bool isEmpty() const;
 
         // --- Colocar / tirar / trocar --- 
-        bool addItem(const Item& item); // Adiciona um item ao inventário
-        bool removeItem(unsigned int index, Item* removido = nullptr); //remove um item usando numeros já previamente setados usando um indice
-        bool replaceItem(unsigned int index, const Item& novo, Item* antigo = nullptr); //Troca um item por outro
-        Item* getItem(unsigned int index); //Retorna o item usando um indice
+        bool addItem(const Item& item);
+        bool removeItem(int index, Item* removido = nullptr);
+        bool replaceItem(int index, const Item& novo, Item* antigo = nullptr);
+        Item* getItem(int index);
+        const Item* getItem(int index) const;
 
-        void printInventory() const;// Printa na tela o inventário
+        const std::vector<Item>& getSlots() const { return slots; }
+        std::vector<Item>& getSlots() { return slots; }
+
+        // --- Arma atual (weapon) ---
+        Item* getWeapon();
+        const Item* getWeapon() const;
+        void setWeapon(Item* newWeapon);
+        bool equipWeapon(int slotIndex);
+
+        void printInventory() const;
 
         // --- soma dos bonus de todos os itens ---
-        unsigned int getBonusLife() const; //Retorna a vida Bonus que é adicionada
-        unsigned int getAttack() const; // Retorna o ataque bonus que é adicionada
-        unsigned int getArmor() const; // Retorna a armadura bonus que é adicionada
-        unsigned int getSpeed() const; // Retorna a velocidade bonus que é adicionada
+        int getBonusLife() const;
+        int getAttack() const;
+        int getArmor() const;
+        int getSpeed() const;
 
 }; 

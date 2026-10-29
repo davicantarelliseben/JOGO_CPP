@@ -6,18 +6,15 @@
 #include <thread>
 #include <chrono>
 
-// ---------------------------------------------------------------------------
-// Auxiliares internos da batalha 
-// ---------------------------------------------------------------------------
 namespace {
 
 struct Lutador {
-    Character*   c;
-    std::string  nome;
-    unsigned int vidaMax;     // base + itens
-    unsigned int ataque;      // base + itens
-    unsigned int escudo;      // base + itens (gasta durante a luta, volta cheia na proxima)
-    unsigned int velocidade;  // base + itens
+    Character* c;
+    std::string nome;
+    int vidaMax;
+    int ataque;
+    int escudo;
+    int velocidade;
 };
 
 void pausa(int ms) {
@@ -31,13 +28,11 @@ void mostrarStatus(const Lutador& a, const Lutador& b) {
               << " HP | " << b.escudo << " ARM\n";
 }
 
-// Estilo He Is Coming: a armadura absorve o dano primeiro e é consumida,
-// o que sobrar vai para a vida.
 void atacar(Lutador& atk, Lutador& def) {
-    unsigned int dano      = atk.ataque;
-    unsigned int absorvido = std::min(dano, def.escudo);
+    int dano = atk.ataque;
+    int absorvido = std::min(dano, def.escudo);
     def.escudo -= absorvido;
-    dano       -= absorvido;
+    dano -= absorvido;
 
     def.c->takeDamage(dano);
 
@@ -49,15 +44,12 @@ void atacar(Lutador& atk, Lutador& def) {
 
 } // namespace
 
-// ---------------------------------------------------------------------------
-
-Battle::Battle(Player* player, Enemy* enemy, unsigned int turno)
-    : player(player), enemy(enemy), turno(turno) {}
+Battle::Battle(Player* player, Enemy* enemy, int turno)
+    : turno(turno), player(player), enemy(enemy) {}
 
 void Battle::battleGoing() {
-    const unsigned int LIMITE_TURNOS = 100;   // evita loop infinito (ex.: ninguém tem ataque)
+    const int LIMITE_TURNOS = 100;
 
-    // 1) Monta os lutadores com PONTEIROS (nada de copiar o objeto!)
     Lutador p{player, "Jogador",
               player->getTotalMaxLife(), player->getTotalAttack(),
               player->getTotalArmor(),   player->getTotalSpeed()};
@@ -66,22 +58,18 @@ void Battle::battleGoing() {
               enemy->getMaxLife(), enemy->getAttack(),
               enemy->getArmor(),   enemy->getSpeed()};
 
-    // 2) Quem tem mais velocidade ataca primeiro (empate = jogador)
     Lutador* primeiro = (p.velocidade >= e.velocidade) ? &p : &e;
     Lutador* segundo  = (primeiro == &p) ? &e : &p;
-
-    // TODO: aqui entram os efeitos de "início de batalha" dos itens
 
     std::cout << "\n=== BATALHA! " << primeiro->nome << " e mais rapido e comeca ===\n";
     mostrarStatus(p, e);
 
-    // 3) Loop automático: ninguém escolhe nada, cada um ataca no seu turno
     while (isBattleOver() == 0 && turno <= LIMITE_TURNOS) {
         std::cout << "\n--- Turno " << turno << " ---\n";
 
         atacar(*primeiro, *segundo);
         pausa(500);
-        if (isBattleOver() != 0) break;      // morto não revida
+        if (isBattleOver() != 0) break;
 
         atacar(*segundo, *primeiro);
         pausa(500);
@@ -90,7 +78,6 @@ void Battle::battleGoing() {
         nextTurn();
     }
 
-    // 4) Resultado
     mostrarStatus(p, e);
     switch (isBattleOver()) {
         case 1:  std::cout << "Jogador venceu!!\n"; break;
@@ -104,50 +91,26 @@ void Battle::nextTurn() {
 }
 
 void Battle::calcDamage() {
-    if (player == nullptr || enemy == nullptr) {
-        return;
-    }
+    if (player == nullptr || enemy == nullptr) return;
 
-    unsigned int danoJogador = player->getTotalAttack();
-    unsigned int danoInimigo = enemy->getAttack();
+    int danoJogador = player->getTotalAttack();
+    int danoInimigo = enemy->getAttack();
 
-    unsigned int defesaJogador = player->getTotalArmor();
-    unsigned int defesaInimigo = enemy->getArmor();
+    int defesaJogador = player->getTotalArmor();
+    int defesaInimigo = enemy->getArmor();
 
-    if (danoJogador > defesaInimigo) {
-        danoJogador -= defesaInimigo;
-    } else {
-        danoJogador = 0;
-    }
+    danoJogador = std::max(0, danoJogador - defesaInimigo);
+    danoInimigo = std::max(0, danoInimigo - defesaJogador);
 
-    if (danoInimigo > defesaJogador) {
-        danoInimigo -= defesaJogador;
-    } else {
-        danoInimigo = 0;
-    }
-
-    unsigned int vidaJogador = player->getCurrentLife();
-    unsigned int vidaInimigo = enemy->getCurrentLife();
-
-    if (danoInimigo >= vidaJogador) {
-        vidaJogador = 0;
-    } else {
-        vidaJogador -= danoInimigo;
-    }
-
-    if (danoJogador >= vidaInimigo) {
-        vidaInimigo = 0;
-    } else {
-        vidaInimigo -= danoJogador;
-    }
+    int vidaJogador = std::max(0, player->getCurrentLife() - danoInimigo);
+    int vidaInimigo = std::max(0, enemy->getCurrentLife() - danoJogador);
 
     player->setCurrentLife(vidaJogador);
     enemy->setCurrentLife(vidaInimigo);
 }
 
-// 0 = continua | 1 = jogador venceu | 2 = inimigo venceu
 int Battle::isBattleOver() {
     if (player->getCurrentLife() == 0) return 2;
-    if (enemy->getCurrentLife()  == 0) return 1;
+    if (enemy->getCurrentLife() == 0) return 1;
     return 0;
 }
