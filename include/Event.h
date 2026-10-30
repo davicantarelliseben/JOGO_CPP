@@ -33,6 +33,7 @@ private:
     void handleTravellingMerchant();
 public:
     Event(eventType type = treasureChest, Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = false);
+    static Event* createRandomEvent(Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = true);
 
     eventType getEventType() const;
     void setEventType(eventType type);

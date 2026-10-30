@@ -83,6 +83,17 @@ void Event::triggerEvent(eventType newType) {
     }
 }
 
+Event* Event::createRandomEvent(Player* player, ItemManager* itemManager, Map* map, bool interactive) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    // Sorteia um número de 0 a 6 correspondente às opções de eventType
+    std::uniform_int_distribution<int> dist(0, 6);
+    eventType randomType = static_cast<eventType>(dist(gen));
+
+    return new Event(randomType, player, itemManager, map, interactive);
+}
+
 // ---------------------------------------------------------------------------
 // 1. Treasure Chest
 // ---------------------------------------------------------------------------

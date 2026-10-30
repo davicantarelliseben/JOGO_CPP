@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <exception>
+#include <random>
 
 Map::Map(int stepsCounter, bool day)
     : stepsCounter(stepsCounter), day(day) {
@@ -138,4 +139,53 @@ void Map::printMap() {
     }
 
     std::cout << "\n=====================================\n";
+}
+
+void Map::populateEventsAndBattles(int playerY, int playerX, Player* player, ItemManager* itemManager) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> chance(1, 100);
+
+    // Raio de segurança ao redor do spawn onde nenhum evento ou inimigo nascerá
+    const int ZONA_DE_SEGURANCA = 5;
+
+    for (int i = 0; i < altura; ++i) {
+        for (int j = 0; j < largura; ++j) {
+
+            // 1. Ignora tiles que não são caminháveis (como paredes 'X')
+            if (!grid[i][j].isWalkable()) {
+                continue;
+            }
+
+            // 2. Garante que nada seja instanciado dentro do raio de segurança
+            int distancia = std::abs(i - playerY) + std::abs(j - playerX);
+            if (distancia <= ZONA_DE_SEGURANCA) {
+                grid[i][j].setEnemy(nullptr);
+                grid[i][j].setEvent(nullptr);
+                continue;
+            }
+
+            // 3. Sorteio por densidade
+            int roll = chance(gen);
+
+            if (roll <= 15) {
+                // 15% de chance de Batalha/Inimigo (Event deve ser nullptr)
+                // grid[i][j].setEnemy(EnemyFactory::createRandomEnemy());
+                grid[i][j].setEvent(nullptr);
+
+            } else if (roll <= 28) {
+                // 13% de chance de Evento Aleatório (Enemy deve ser nullptr)
+                grid[i][j].setEnemy(nullptr);
+                
+                // Instancia o evento aleatório com a fábrica/método estático
+                Event* novoEvento = Event::createRandomEvent(player, itemManager, this, true);
+                grid[i][j].setEvent(novoEvento);
+
+            } else {
+                // 72% de chance de o tile permanecer limpo
+                grid[i][j].setEnemy(nullptr);
+                grid[i][j].setEvent(nullptr);
+            }
+        }
+    }
 }
