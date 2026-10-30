@@ -19,7 +19,7 @@ public:
     void addSteps(int val);
     void setSteps(int val);
     void revealAroundPlayer(int radius = 3);
-    void populateEventsAndBattles(int playerY, int playerX);
+    void populateEventsAndBattles(int playerY, int playerX, Player* player, ItemManager* itemManager);
     void printMap();
     bool loadFromFile(const std::string& filename);
 
