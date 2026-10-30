@@ -96,7 +96,7 @@ int main() {
 
     Map gameMap;
 
-    if (gameMap.loadFromFile("mapa.txt")) {
+    if (gameMap.loadFromFile("grid.txt")) {
         std::cout << "Mapa carregado com sucesso!\n";
         
         // Imprime a matriz completa no console

@@ -129,7 +129,7 @@ void Map::printMap() {
         for (int j = 0; j < largura; ++j) {
             // Se a célula for caminhável, imprime 'O', caso contrário 'X'
             if(grid[i][j].isWalkable()) { // Ajuste o nome do método de acordo com o header de Tiles
-                std::cout << 'O';
+                std::cout << "\033[32mO\033[0m";
             } else {
                 std::cout << 'X';
             }
@@ -139,4 +139,3 @@ void Map::printMap() {
 
     std::cout << "\n=====================================\n";
 }
-
