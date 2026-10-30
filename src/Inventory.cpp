@@ -1,5 +1,5 @@
-#include "Inventory.h"
-#include "GameItemException.h"
+#include "../include/Inventory.h"
+#include "../include/GameItemException.h"
 #include <algorithm>
 #include <iostream>
 #include <limits>

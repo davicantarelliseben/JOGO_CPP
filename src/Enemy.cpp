@@ -1,4 +1,4 @@
-#include "Enemy.h"
+#include "../include/Enemy.h"
 
 Enemy::Enemy(int max_life, int currentLife, int attack, int armor, int speed,
              enemyType type, int level)

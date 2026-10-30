@@ -7,18 +7,20 @@ private:
     int stepsCounter;
     bool day;
     std::vector<std::vector<Tiles>> grid;
-    int altura = 64;
-    int largura = 64;
+    int altura = 0;
+    int largura = 0;
 
 public:
     Map(int stepsCounter = 30, bool day = true);
     void cycleDay();
     int getSteps();
     int countStep();
-
     bool isDay() const;
     void addSteps(int val);
     void setSteps(int val);
     void revealAroundPlayer(int radius = 3);
+    
+    void printMap();
+    bool loadFromFile(const std::string& filename);
 
 };

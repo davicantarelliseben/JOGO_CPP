@@ -1,10 +1,10 @@
-#include "Event.h"
-#include "Player.h"
-#include "ItemManager.h"
-#include "Map.h"
-#include "Item.h"
-#include "Inventory.h"
-#include "GameItemException.h"
+#include "../include/Event.h"
+#include "../include/Player.h"
+#include "../include/ItemManager.h"
+#include "../include/Map.h"
+#include "../include/Item.h"
+#include "../include/Inventory.h"
+#include "../include/GameItemException.h"
 #include <iostream>
 #include <vector>
 #include <algorithm>

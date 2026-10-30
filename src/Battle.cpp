@@ -1,5 +1,5 @@
-#include "Battle.h"
-#include "Inventory.h"
+#include "../include/Battle.h"
+#include "../include/Inventory.h"
 #include <iostream>
 #include <string>
 #include <algorithm>

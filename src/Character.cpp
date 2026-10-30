@@ -1,4 +1,4 @@
-#include "Character.h"
+#include "../include/Character.h"
 
 Character::Character(int mLife, int cLife, int atk, int armor, int speed)
     : maxLife(mLife), currentLife(cLife), attack(atk), armor(armor), speed(speed) {}

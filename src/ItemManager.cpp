@@ -1,6 +1,6 @@
-#include "ItemManager.h"
-#include "json.hpp"
-#include "GameItemException.h"
+#include "../include/ItemManager.h"
+#include "../include/json.hpp"
+#include "../include/GameItemException.h"
 #include <fstream>
 #include <iostream>
 #include <algorithm>

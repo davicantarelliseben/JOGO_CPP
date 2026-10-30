@@ -1,5 +1,5 @@
-#include "Player.h"
-#include "Inventory.h"
+#include "../include/Player.h"
+#include "../include/Inventory.h"
 #include <algorithm>
 #include <climits>
 #include <iostream>

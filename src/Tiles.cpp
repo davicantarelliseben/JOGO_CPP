@@ -1,7 +1,11 @@
-#include "Tiles.h"
+#include "../include/Tiles.h"
 
 Tiles::Tiles(bool walkable, Battle* battle, Event* event)
     : walkable(walkable), battle(battle), event(event) {}
+
+void Tiles::setWalkable(bool v) {
+    this->walkable = v;
+}
 
 bool Tiles::isWalkable() {
     return walkable;

@@ -1,7 +1,7 @@
-#include "Player.h"
-#include "ItemManager.h"
-#include "Event.h"
-#include "Map.h"
+#include "../include/Player.h"
+#include "../include/ItemManager.h"
+#include "../include/Event.h"
+#include "../include/Map.h"
 #include <iostream>
 
 int main() {
@@ -93,6 +93,17 @@ int main() {
     std::cout << "========================================================\n";
     player.printStats();
     player.printInventory();
+
+    Map gameMap;
+
+    if (gameMap.loadFromFile("mapa.txt")) {
+        std::cout << "Mapa carregado com sucesso!\n";
+        
+        // Imprime a matriz completa no console
+        gameMap.printMap();
+    } else {
+        std::cerr << "Falha ao carregar o arquivo do mapa.\n";
+    }
 
     return 0;
 }

@@ -1,4 +1,4 @@
-#include "GameItemException.h"
+#include "../include/GameItemException.h"
 
 GameItemException::GameItemException(const std::string& msg)
     : mensagem(msg) {}
