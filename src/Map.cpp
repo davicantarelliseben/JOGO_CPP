@@ -2,7 +2,9 @@
 #include <iostream>
 
 Map::Map(int stepsCounter, bool day)
-    : stepsCounter(stepsCounter), day(day) {}
+    : stepsCounter(stepsCounter), day(day) {
+        grid = std::vector<std::vector<Tiles>>(altura, std::vector<Tiles>(largura, Tiles(false, nullptr, nullptr)));
+    }
 
 int Map::countStep() {
     if (stepsCounter == 0) {
