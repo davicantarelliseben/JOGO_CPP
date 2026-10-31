@@ -87,11 +87,24 @@ Event* Event::createRandomEvent(Player* player, ItemManager* itemManager, Map* m
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    // Sorteia um número de 0 a 6 correspondente às opções de eventType
-    std::uniform_int_distribution<int> dist(0, 6);
-    eventType randomType = static_cast<eventType>(dist(gen));
+    // Defina os pesos para cada evento na ordem exata do enum eventType:
+    // { treasureChest, bladeOils, campfire, forge, golem, lookoutTower, travellingMerchant }
+    //
+    // Exemplo de proporções:
+    //  - Baú de Tesouro (treasureChest):      40  (Muito Comum)
+    //  - Acampamento (campfire):             20  (Comum)
+    //  - Óleos de Lâmina (bladeOils):         15  (Incomum)
+    //  - Forja (forge):                      10  (Incomum)
+    //  - Golem de Pedra (golem):             10  (Incomum)
+    //  - Mercador Viajante (merchant):        8   (Raro)
+    //  - Torre de Vigia (lookoutTower):       3   (Muito Raro)
+    
+    std::discrete_distribution<int> dist({ 40, 15, 20, 10, 10, 3, 8 });
 
-    return new Event(randomType, player, itemManager, map, interactive);
+    int indiceSorteado = dist(gen);
+    eventType selectedType = static_cast<eventType>(indiceSorteado);
+
+    return new Event(selectedType, player, itemManager, map, interactive);
 }
 
 // ---------------------------------------------------------------------------
@@ -117,13 +130,25 @@ void Event::handleTreasureChest() {
             throw GameItemException("Nenhum item encontrado no catalogo para a raridade " + raridadeSorteada);
         }
 
+        // Exibe apenas armas (isWeapon()) em vermelho negrito
         auto exibirOpcao = [](int num, const Item& item) {
-            std::cout << " [" << num << "] " << item.getName()
-                      << " [" << item.getRarity() << "]"
-                      << " | VIDA " << (item.getLife() >= 0 ? "+" : "") << item.getLife()
-                      << " | ATK "  << (item.getAttack() >= 0 ? "+" : "") << item.getAttack()
-                      << " | ARM "  << (item.getArmor() >= 0 ? "+" : "") << item.getArmor()
-                      << " | SPD "  << (item.getSpeed() >= 0 ? "+" : "") << item.getSpeed() << "\n";
+            std::cout << " [" << num << "] ";
+            if (item.isWeapon()) {
+                std::cout << "\033[1;31m" << item.getName()
+                          << " [" << item.getRarity() << "]"
+                          << " | VIDA " << (item.getLife() >= 0 ? "+" : "") << item.getLife()
+                          << " | ATK "  << (item.getAttack() >= 0 ? "+" : "") << item.getAttack()
+                          << " | ARM "  << (item.getArmor() >= 0 ? "+" : "") << item.getArmor()
+                          << " | SPD "  << (item.getSpeed() >= 0 ? "+" : "") << item.getSpeed()
+                          << "\033[0m\n";
+            } else {
+                std::cout << item.getName()
+                          << " [" << item.getRarity() << "]"
+                          << " | VIDA " << (item.getLife() >= 0 ? "+" : "") << item.getLife()
+                          << " | ATK "  << (item.getAttack() >= 0 ? "+" : "") << item.getAttack()
+                          << " | ARM "  << (item.getArmor() >= 0 ? "+" : "") << item.getArmor()
+                          << " | SPD "  << (item.getSpeed() >= 0 ? "+" : "") << item.getSpeed() << "\n";
+            }
         };
 
         int numOpcoes = opcoes.size();
@@ -162,25 +187,27 @@ void Event::handleTreasureChest() {
 
         Item itemEscolhido = opcoes[escolha - 1];
 
-        if (!player->addItem(itemEscolhido)) {
-            std::cout << "Inventario cheio! Procurando espaco para substituir item...\n";
-            bool substituiu = false;
-            int itemCount = player->getInventory().getItemCount();
-            for (int i = 0; i < itemCount; ++i) {
-                const Item* atual = player->getItem(i);
-                if (atual != nullptr && atual->getAttack() < itemEscolhido.getAttack()) {
-                    const std::string nomeSubstituido = atual->getName();
-                    player->replaceItem(i, itemEscolhido);
-                    substituiu = true;
-                    std::cout << ">> '" << nomeSubstituido << "' foi substituido por '" << itemEscolhido.getName() << "'!\n";
-                    break;
-                }
+        // Lógica de substituição exclusiva para Armas
+        if (itemEscolhido.isWeapon()) {
+            std::cout << "\n\033[1;31m[ARMA ENCONTRADA]: '" << itemEscolhido.getName() 
+                      << "' possui " << itemEscolhido.getAttack() << " de ATK.\033[0m\n";
+            std::cout << "Deseja equipa-la agora e descartar a sua arma atual? [S/N]: ";
+            
+            char resp;
+            if (interactive && std::cin >> resp && (resp == 's' || resp == 'S')) {
+                player->addItem(itemEscolhido);
+                int ultimoSlot = player->getInventory().getItemCount() - 1;
+                player->equipWeaponFromSlot(ultimoSlot);
+            } else {
+                std::cout << ">> Voce deixou a arma para tras.\n";
             }
-            if (!substituiu) {
-                std::cout << ">> Inventario cheio e nenhum item inferior encontrado para substituir.\n";
+        } 
+        else {
+            if (!player->addItem(itemEscolhido)) {
+                std::cout << ">> Mochila cheia! Nao foi possivel guardar o item.\n";
+            } else {
+                std::cout << ">> Item '" << itemEscolhido.getName() << "' guardado na mochila com sucesso!\n";
             }
-        } else {
-            std::cout << ">> Item '" << itemEscolhido.getName() << "' adicionado ao inventario com sucesso!\n";
         }
 
     } catch (const GameItemException& e) {
@@ -200,25 +227,14 @@ void Event::handleBladeOils() {
         }
 
         const Item* arma = player->getWeapon();
-        if (arma == nullptr) {
-            int itemCount = player->getInventory().getItemCount();
-            for (int i = 0; i < itemCount; ++i) {
-                const Item* it = player->getItem(i);
-                if (it != nullptr && it->getAttack() > 0) {
-                    player->equipWeapon(i);
-                    arma = player->getWeapon();
-                    break;
-                }
-            }
-        }
 
         if (arma == nullptr) {
-            throw GameItemException("O jogador nao possui nenhuma arma para aplicar oleos!");
+            throw GameItemException("O jogador nao possui nenhuma arma equipada para aplicar oleos!");
         }
 
         std::cout << "\n======================================================\n";
         std::cout << " [EVENTO]: Oleos de Lamina (Blade Oils)\n";
-        std::cout << " Arma Atual: " << arma->getName() << "\n";
+        std::cout << " Arma Atual Equipada: \033[1;31m" << arma->getName() << "\033[0m\n";
         std::cout << "======================================================\n";
         arma->printItem();
 
@@ -280,7 +296,7 @@ void Event::handleBladeOils() {
             throw GameItemException("Falha ao aplicar oleo na arma atual!");
         }
 
-        std::cout << ">> Sucesso! " << getNomeOleo(escolhaOleo) << " aplicado em '" << arma->getName() << "'!\n";
+        std::cout << ">> Sucesso! " << getNomeOleo(escolhaOleo) << " aplicado em '\033[1;31m" << arma->getName() << "\033[0m'!\n";
         arma->printItem();
 
     } catch (const GameItemException& e) {
@@ -398,10 +414,10 @@ void Event::handleLookoutTower() {
 
         auto revelarMapa = [this]() {
             if (map != nullptr) {
-                map->revealAroundPlayer(3);
+                map->revealAroundPlayer(5); // Revela um raio de 5 tiles ao redor da torre
                 map->addSteps(10);
             } else {
-                std::cout << ">> Visao panoramica revela o mapa em torno do jogador!\n";
+                std::cout << ">> Visao panoramica revela o mapa em torno da torre!\n";
             }
         };
 
@@ -409,8 +425,8 @@ void Event::handleLookoutTower() {
 
         player->addSpeed(1);
 
-        std::cout << ">> O conhecimento do relevo tornou seus passos mais rapidos!\n";
-        std::cout << ">> +1 de VELOCIDADE permanente concedido ao jogador!\n";
+        std::cout << ">> Do topo da torre, voce enxerga alem da nevoa!\n";
+        std::cout << ">> O conhecimento do relevo concedeu +10 passos e +1 de VELOCIDADE permanente!\n";
         std::cout << "Velocidade base: " << player->getSpeed() << " | Velocidade Total: " << player->getTotalSpeed() << "\n";
 
     } catch (const GameItemException& e) {
@@ -463,13 +479,24 @@ void Event::handleTravellingMerchant() {
         auto exibirOfertas = [&ofertas, totalOfertas]() {
             for (int i = 0; i < totalOfertas; ++i) {
                 const auto& of = ofertas[i];
-                std::cout << " [" << (i + 1) << "] " << of.item.getName()
-                          << " [" << of.item.getRarity() << "]"
-                          << " | Preco: " << of.preco << " moedas"
-                          << " | VIDA " << (of.item.getLife() >= 0 ? "+" : "") << of.item.getLife()
-                          << " | ATK "  << (of.item.getAttack() >= 0 ? "+" : "") << of.item.getAttack()
-                          << " | ARM "  << (of.item.getArmor() >= 0 ? "+" : "") << of.item.getArmor()
-                          << " | SPD "  << (of.item.getSpeed() >= 0 ? "+" : "") << of.item.getSpeed() << "\n";
+                std::cout << " [" << (i + 1) << "] ";
+
+                if (of.item.isWeapon()) {
+                    std::cout << "\033[1;31m" << of.item.getName() << " [" << of.item.getRarity() << "]"
+                              << " | Preco: " << of.preco << " moedas"
+                              << " | VIDA " << (of.item.getLife() >= 0 ? "+" : "") << of.item.getLife()
+                              << " | ATK "  << (of.item.getAttack() >= 0 ? "+" : "") << of.item.getAttack()
+                              << " | ARM "  << (of.item.getArmor() >= 0 ? "+" : "") << of.item.getArmor()
+                              << " | SPD "  << (of.item.getSpeed() >= 0 ? "+" : "") << of.item.getSpeed()
+                              << "\033[0m\n";
+                } else {
+                    std::cout << of.item.getName() << " [" << of.item.getRarity() << "]"
+                              << " | Preco: " << of.preco << " moedas"
+                              << " | VIDA " << (of.item.getLife() >= 0 ? "+" : "") << of.item.getLife()
+                              << " | ATK "  << (of.item.getAttack() >= 0 ? "+" : "") << of.item.getAttack()
+                              << " | ARM "  << (of.item.getArmor() >= 0 ? "+" : "") << of.item.getArmor()
+                              << " | SPD "  << (of.item.getSpeed() >= 0 ? "+" : "") << of.item.getSpeed() << "\n";
+                }
             }
             std::cout << " [0] Nao comprar nada / Sair\n";
         };
@@ -492,8 +519,9 @@ void Event::handleTravellingMerchant() {
                         continue;
                     }
 
-                    if (player->getInventory().isFull()) {
-                        std::cout << ">> Inventario cheio! Nao e possivel comprar o item.\n";
+                    // Se não for arma, valida capacidade da mochila
+                    if (!selecionada.item.isWeapon() && player->getInventory().isFull()) {
+                        std::cout << ">> Mochila cheia! Nao e possivel comprar este item utilitario.\n";
                         return;
                     }
 
@@ -516,12 +544,30 @@ void Event::handleTravellingMerchant() {
 
         const auto& selecionada = ofertas[escolha - 1];
 
-        player->spendCoins(selecionada.preco);
-        player->addItem(selecionada.item);
-
-        std::cout << ">> Compra realizada com sucesso! '" << selecionada.item.getName()
-                  << "' adquirido por " << selecionada.preco << " moedas!\n";
-        std::cout << "Saldo atualizado de moedas: " << player->getCoins() << "\n";
+        if (selecionada.item.isWeapon()) {
+            std::cout << "\n\033[1;31m[ATENCAO]: '" << selecionada.item.getName() << "' e uma arma.\033[0m\n";
+            std::cout << "Ao compra-la, ela sera equipada imediatamente e a sua arma atual sera descartada.\n";
+            std::cout << "Deseja confirmar a compra e equipar? [S/N]: ";
+            
+            char resp;
+            if (std::cin >> resp && (resp == 's' || resp == 'S')) {
+                player->spendCoins(selecionada.preco);
+                player->addItem(selecionada.item);
+                
+                int ultimoSlot = player->getInventory().getItemCount() - 1;
+                player->equipWeaponFromSlot(ultimoSlot);
+                
+                std::cout << ">> Compra realizada! '\033[1;31m" << selecionada.item.getName() << "\033[0m' foi equipada.\n";
+            } else {
+                std::cout << ">> Compra cancelada pelo jogador.\n";
+            }
+        } 
+        else {
+            player->spendCoins(selecionada.preco);
+            player->addItem(selecionada.item);
+            std::cout << ">> Compra realizada com sucesso! '" << selecionada.item.getName()
+                      << "' guardado na mochila por " << selecionada.preco << " moedas!\n";
+        }
 
     } catch (const GameItemException& e) {
         std::cerr << "[GameItemException no Mercador]: " << e.what() << "\n";

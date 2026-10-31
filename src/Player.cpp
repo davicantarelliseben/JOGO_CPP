@@ -1,5 +1,4 @@
 #include "../include/Player.h"
-#include "../include/Inventory.h"
 #include <algorithm>
 #include <climits>
 #include <iostream>
@@ -13,16 +12,20 @@ Player::Player(std::string nome, int maxLife, int currentLife,
     if (coins < 0) {
         throw std::invalid_argument("O saldo inicial de moedas nao pode ser negativo.");
     }
+
+    // Instancia e equipa a arma inicial "Graveto" diretamente na variável isolada
+    Item graveto(0, "Graveto", "Common", 0, 1, 0, 0);
+    this->equippedWeapon = graveto;
+    this->hasWeaponEquipped = true;
+
     ajustarVida(currentLife);
 }
 
 Player::~Player() {}
 
-// ---------------- inventario ----------------
+// ---------------- Inventário ----------------
 
-const Inventory& Player::getInventory() const {
-    return inventory;
-}
+const Inventory& Player::getInventory() const { return inventory; }
 
 void Player::setInventory(const Inventory& novo) {
     inventory = novo;
@@ -30,27 +33,20 @@ void Player::setInventory(const Inventory& novo) {
 }
 
 bool Player::addItem(const Item& item) {
-    if (!inventory.addItem(item)) {
-        return false;
-    }
-
+    if (!inventory.addItem(item)) return false;
     ajustarVida(static_cast<long long>(currentLife) + item.getLife());
     return true;
 }
 
 bool Player::removeItem(int index) {
-    if (!inventory.removeItem(index)) {
-        return false;
-    }
+    if (!inventory.removeItem(index)) return false;
     ajustarVida(currentLife);
     return true;
 }
 
 bool Player::replaceItem(int index, const Item& novo) {
     Item antigo;
-    if (!inventory.replaceItem(index, novo, &antigo)) {
-        return false;
-    }
+    if (!inventory.replaceItem(index, novo, &antigo)) return false;
 
     int vidaNova = novo.getLife();
     int vidaVelha = antigo.getLife();
@@ -62,62 +58,70 @@ bool Player::replaceItem(int index, const Item& novo) {
     return true;
 }
 
-const Item* Player::getItem(int index) const {
-    return inventory.getItem(index);
-}
+const Item* Player::getItem(int index) const { return inventory.getItem(index); }
 
-// ---------------- arma atual ----------------
+// ---------------- Arma Equipada ----------------
 
 const Item* Player::getWeapon() const {
-    return inventory.getWeapon();
+    return hasWeaponEquipped ? &equippedWeapon : nullptr;
+}
+
+Item* Player::getWeapon() {
+    return hasWeaponEquipped ? &equippedWeapon : nullptr;
+}
+
+bool Player::equipWeaponFromSlot(int slotIndex) {
+    Item novaArma;
+    
+    // 1. Remove a nova arma da mochila
+    if (!inventory.removeItem(slotIndex, &novaArma)) {
+        return false;
+    }
+
+    // 2. Se já havia uma arma equipada, ela é descartada/substituída pela nova
+    // (A arma antiga é sobrescrita e não retorna para o inventário)
+    equippedWeapon = novaArma;
+    hasWeaponEquipped = true;
+
+    // 3. Atualiza os atributos de vida do jogador com a nova arma
+    ajustarVida(currentLife);
+    
+    std::cout << ">> " << novaArma.getName() << " foi equipada! A arma anterior foi descartada.\n";
+    return true;
 }
 
 bool Player::applyWeaponOil(int option) {
-    Item* weapon = inventory.getWeapon();
-    return weapon != nullptr && weapon->applyOil(option);
+    return hasWeaponEquipped && equippedWeapon.applyOil(option);
 }
 
-void Player::setWeapon(Item* w) {
-    inventory.setWeapon(w);
-}
-
-bool Player::equipWeapon(int slotIndex) {
-    return inventory.equipWeapon(slotIndex);
-}
-
-// ---------------- Player Name ---------------------
-
-std::string Player::getName() const { return this->name; }
-
-// ---------------- atributos totais ----------------
+// ---------------- Atributos Totais ----------------
 
 int Player::getTotalMaxLife() const {
-    const long long total = static_cast<long long>(maxLife) + inventory.getBonusLife();
-    return static_cast<int>(std::max(
-        1LL, std::min(total, static_cast<long long>(INT_MAX))));
+    long long total = static_cast<long long>(maxLife) + inventory.getBonusLife();
+    if (hasWeaponEquipped) total += equippedWeapon.getLife();
+    return static_cast<int>(std::max(1LL, std::min(total, static_cast<long long>(INT_MAX))));
 }
 
 int Player::getTotalAttack() const {
-    const long long total = static_cast<long long>(attack) + inventory.getAttack();
-    return static_cast<int>(std::max(
-        0LL, std::min(total, static_cast<long long>(INT_MAX))));
+    long long total = static_cast<long long>(attack) + inventory.getAttack();
+    if (hasWeaponEquipped) total += equippedWeapon.getAttack();
+    return static_cast<int>(std::max(0LL, std::min(total, static_cast<long long>(INT_MAX))));
 }
 
 int Player::getTotalArmor() const {
-    const long long total = static_cast<long long>(armor) + inventory.getArmor();
-    return static_cast<int>(std::max(
-        0LL, std::min(total, static_cast<long long>(INT_MAX))));
+    long long total = static_cast<long long>(armor) + inventory.getArmor();
+    if (hasWeaponEquipped) total += equippedWeapon.getArmor();
+    return static_cast<int>(std::max(0LL, std::min(total, static_cast<long long>(INT_MAX))));
 }
 
 int Player::getTotalSpeed() const {
-    const long long total = static_cast<long long>(speed) + inventory.getSpeed();
-    return static_cast<int>(std::max(
-        0LL, std::min(total, static_cast<long long>(INT_MAX))));
+    long long total = static_cast<long long>(speed) + inventory.getSpeed();
+    if (hasWeaponEquipped) total += equippedWeapon.getSpeed();
+    return static_cast<int>(std::max(0LL, std::min(total, static_cast<long long>(INT_MAX))));
 }
 
 void Player::ajustarVida(long long vida) {
-    currentLife = static_cast<int>(std::max(
-        0LL, std::min(vida, static_cast<long long>(getTotalMaxLife()))));
+    currentLife = static_cast<int>(std::max(0LL, std::min(vida, static_cast<long long>(getTotalMaxLife()))));
 }
 
 void Player::heal(int quantidade) {
@@ -125,9 +129,7 @@ void Player::heal(int quantidade) {
     ajustarVida(static_cast<long long>(currentLife) + quantidade);
 }
 
-void Player::fullHeal() {
-    ajustarVida(getTotalMaxLife());
-}
+void Player::fullHeal() { ajustarVida(getTotalMaxLife()); }
 
 void Player::printStats() {
     std::cout << " Player: " << getName() << std::endl;
@@ -137,32 +139,19 @@ void Player::printStats() {
     std::cout << "| Ataque: " << getAttack() << " | Total: " << getTotalAttack() << std::endl;
     std::cout << "| Armadura: " << getArmor() << " | Total: " << getTotalArmor() << std::endl;
     std::cout << "| Velocidade: " << getSpeed() << " | Total: " << getTotalSpeed() << std::endl;
-    if (getWeapon() != nullptr) {
-        std::cout << "| Arma Equipada: " << getWeapon()->getName() << std::endl;
-    }
 }
 
-void Player::printInventory() {
-    inventory.printInventory();
-}
-
-// ---------------- moedas ----------------
+void Player::printInventory() { inventory.printInventory(getWeapon()); }
 
 int Player::getCoins() const { return coins; }
 void Player::setCoins(int valor) {
-    if (valor < 0) {
-        throw std::invalid_argument("O saldo de moedas nao pode ser negativo.");
-    }
+    if (valor < 0) throw std::invalid_argument("O saldo de moedas nao pode ser negativo.");
     coins = valor;
 }
 
 void Player::addCoins(int valor) {
-    if (valor < 0) {
-        throw std::invalid_argument("A quantidade de moedas adicionada nao pode ser negativa.");
-    }
-    if (valor > INT_MAX - coins) {
-        throw std::overflow_error("O saldo de moedas excede o limite suportado.");
-    }
+    if (valor < 0) throw std::invalid_argument("A quantidade de moedas adicionada nao pode ser negativa.");
+    if (valor > INT_MAX - coins) throw std::overflow_error("O saldo de moedas excede o limite suportado.");
     coins += valor;
 }
 
@@ -172,28 +161,13 @@ bool Player::spendCoins(int valor) {
     return true;
 }
 
-// ---------------- incrementos nos atributos base ----------------
-
-void Player::setCurrentLife(int valor) {
-    ajustarVida(valor);
-}
-
+std::string Player::getName() const { return name; }
+void Player::setCurrentLife(int valor) { ajustarVida(valor); }
 void Player::addMaxLife(int val) {
     if (val == 0) return;
-    const long long novaVidaMax = static_cast<long long>(maxLife) + val;
-    maxLife = static_cast<int>(std::max(1LL, std::min(
-        novaVidaMax, static_cast<long long>(INT_MAX))));
+    maxLife = static_cast<int>(std::max(1LL, std::min(static_cast<long long>(maxLife) + val, static_cast<long long>(INT_MAX))));
     ajustarVida(currentLife);
 }
-
-void Player::addAttack(int val) {
-    attack += val;
-}
-
-void Player::addArmor(int val) {
-    armor += val;
-}
-
-void Player::addSpeed(int val) {
-    speed += val;
-}
+void Player::addAttack(int val) { attack += val; }
+void Player::addArmor(int val) { armor += val; }
+void Player::addSpeed(int val) { speed += val; }

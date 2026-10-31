@@ -12,43 +12,50 @@ namespace {
 struct Lutador {
     Character* c;
     std::string nome;
-    int vidaMax;
-    int ataque;
-    int armadura;
-    int velocidade;
+
+    // Métodos utilitários que sempre pegam os dados atualizados do objeto real
+    int getVidaMax() const { return c->getMaxLife(); }
+    int getAtaque() const { return c->getAttack(); }
+    int getArmadura() const { return c->getArmor(); }
+    int getVelocidade() const { return c->getSpeed(); }
 };
 
 void pausa(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-Lutador criarLutador(Player* player) {
-    return {player, player->getName(), player->getTotalMaxLife(),
-            player->getTotalAttack(), player->getTotalArmor(),
-            player->getTotalSpeed()};
+void mostrarStatus(Player* p, Enemy* e) {
+    std::cout << "  " << p->getName() << ": " << p->getCurrentLife() << "/" << p->getTotalMaxLife()
+              << " HP | " << p->getTotalArmor() << " ARM"
+              << "      Inimigo: " << e->getCurrentLife() << "/" << e->getMaxLife()
+              << " HP | " << e->getArmor() << " ARM\n";
 }
 
-Lutador criarLutador(Enemy* enemy) {
-    return {enemy, "Inimigo", enemy->getMaxLife(), enemy->getAttack(),
-            enemy->getArmor(), enemy->getSpeed()};
-}
+void atacar(Character* atk, Character* def, const std::string& nomeAtk, const std::string& nomeDef) {
+    // Se for o Player, pega o ataque total (incluindo arma, óleos e bônus)
+    int ataque = 0;
+    Player* pAtk = dynamic_cast<Player*>(atk);
+    if (pAtk != nullptr) {
+        ataque = std::max(0, pAtk->getTotalAttack());
+    } else {
+        ataque = std::max(0, atk->getAttack());
+    }
 
-void mostrarStatus(const Lutador& a, const Lutador& b) {
-    std::cout << "  " << a.nome << ": " << a.c->getCurrentLife() << "/" << a.vidaMax
-              << " HP | " << a.armadura << " ARM"
-              << "      " << b.nome << ": " << b.c->getCurrentLife() << "/" << b.vidaMax
-              << " HP | " << b.armadura << " ARM\n";
-}
+    // Se o defensor for o Player, pega a armadura total dele
+    int armadura = 0;
+    Player* pDef = dynamic_cast<Player*>(def);
+    if (pDef != nullptr) {
+        armadura = std::max(0, pDef->getTotalArmor());
+    } else {
+        armadura = std::max(0, def->getArmor());
+    }
 
-void atacar(Lutador& atk, Lutador& def) {
-    const int ataque = std::max(0, atk.ataque);
-    const int armadura = std::max(0, def.armadura);
     const int dano = std::max(0, ataque - armadura);
     const int absorvido = ataque - dano;
 
-    def.c->takeDamage(dano);
+    def->takeDamage(dano);
 
-    std::cout << "  " << atk.nome << " ataca " << def.nome << ": "
+    std::cout << "  " << nomeAtk << " ataca " << nomeDef << ": "
               << dano << " de dano";
     if (absorvido > 0) std::cout << " (" << absorvido << " absorvido pela armadura)";
     std::cout << "\n";
@@ -66,28 +73,28 @@ Battle::Battle(Player* player, Enemy* enemy, int turno)
 void Battle::battleGoing() {
     const int LIMITE_TURNOS = 100;
 
-    Lutador p = criarLutador(player);
-    Lutador e = criarLutador(enemy);
-    const bool jogadorComeca = p.velocidade >= e.velocidade;
+    const bool jogadorComeca = player->getTotalSpeed() >= enemy->getSpeed();
 
     std::cout << "\n=== BATALHA! "
-              << (jogadorComeca ? p.nome : e.nome)
+              << (jogadorComeca ? player->getName() : "Inimigo")
               << " e mais rapido e comeca ===\n";
-    mostrarStatus(p, e);
+    
+    mostrarStatus(player, enemy);
 
     while (isBattleOver() == 0 && turno <= LIMITE_TURNOS) {
         std::cout << "\n--- Turno " << turno << " ---\n";
 
         calcDamage();
         pausa(500);
-        mostrarStatus(p, e);
+        mostrarStatus(player, enemy);
+        
         if (isBattleOver() != 0) break;
         nextTurn();
     }
 
-    mostrarStatus(p, e);
+    std::cout << "\n=== FIM DE BATALHA ===\n";
     switch (isBattleOver()) {
-        case 1:  std::cout << p.nome << " venceu!!\n"; break;
+        case 1:  std::cout << player->getName() << " venceu!!\n"; break;
         case 2:  std::cout << "Inimigo venceu!!\n"; break;
         default: std::cout << "Empate (limite de turnos)\n"; break;
     }
@@ -98,14 +105,18 @@ void Battle::nextTurn() {
 }
 
 void Battle::calcDamage() {
-    Lutador p = criarLutador(player);
-    Lutador e = criarLutador(enemy);
-    Lutador* primeiro = (p.velocidade >= e.velocidade) ? &p : &e;
-    Lutador* segundo = (primeiro == &p) ? &e : &p;
+    bool pMaisRapido = player->getTotalSpeed() >= enemy->getSpeed();
 
-    atacar(*primeiro, *segundo);
-    if (isBattleOver() == 0) {
-        atacar(*segundo, *primeiro);
+    if (pMaisRapido) {
+        atacar(player, enemy, player->getName(), "Inimigo");
+        if (isBattleOver() == 0) {
+            atacar(enemy, player, "Inimigo", player->getName());
+        }
+    } else {
+        atacar(enemy, player, "Inimigo", player->getName());
+        if (isBattleOver() == 0) {
+            atacar(player, enemy, player->getName(), "Inimigo");
+        }
     }
 }
 

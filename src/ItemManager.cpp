@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
+#include <numeric>
 
 using json = nlohmann::json;
 
@@ -43,6 +44,17 @@ bool ItemManager::loadItemsFromJson(const std::string& filePath) {
                     std::string name = jsonItem.value("name", "Desconhecido");
                     std::string rarity = jsonItem.value("rarity", "Common");
 
+                    // Determina se o item é uma Arma (Weapon) ou Passivo (Passive)
+                    // 1. Prioriza a chave "type" se ela existir no objeto do item
+                    // 2. Se não existir, define pela categoria do array no JSON ("weapons" -> Weapon, "items" -> Passive)
+                    ItemType type = ItemType::Passive;
+                    if (jsonItem.contains("type")) {
+                        std::string typeStr = jsonItem.value("type", "Passive");
+                        type = (typeStr == "Weapon") ? ItemType::Weapon : ItemType::Passive;
+                    } else {
+                        type = (category == "weapons") ? ItemType::Weapon : ItemType::Passive;
+                    }
+
                     int life = 0, attack = 0, armor = 0, speed = 0;
 
                     if (jsonItem.contains("stats")) {
@@ -68,7 +80,8 @@ bool ItemManager::loadItemsFromJson(const std::string& filePath) {
                         speed = parseStat(stats, "speed");
                     }
 
-                    Item item(id, name, rarity, life, attack, armor, speed);
+                    // Instancia o Item informando o ItemType correto
+                    Item item(id, name, rarity, life, attack, armor, speed, type);
                     allItems.push_back(item);
                     categorizedItems[category].push_back(item);
                 }
@@ -150,20 +163,18 @@ std::vector<Item> ItemManager::getDistinctItemsByRarity(const std::string& rarit
 
     std::vector<Item> result;
     for (const auto& item : pool) {
-        auto jaTem = [&result](const Item& c) {
-            return std::any_of(result.begin(), result.end(), [&c](const Item& exist) {
-                return exist.getName() == c.getName();
-            });
-        };
+        bool jaExiste = std::any_of(result.begin(), result.end(), [&item](const Item& exist) {
+            return exist.getName() == item.getName();
+        });
 
-        if (!jaTem(item)) {
+        if (!jaExiste) {
             result.push_back(item);
         }
-        int curSize = result.size();
-        if (curSize >= count) break;
+
+        if (static_cast<int>(result.size()) >= count) break;
     }
 
-    int poolSize = pool.size();
+    size_t poolSize = pool.size();
     while (static_cast<int>(result.size()) < count && poolSize > 0) {
         result.push_back(pool[result.size() % poolSize]);
     }
@@ -195,9 +206,8 @@ Item ItemManager::getRandomItemForChest(std::string targetRarity) {
 
         static std::random_device rd;
         static std::mt19937 gen(rd());
-        int totalFiltered = filteredItems.size();
-        std::uniform_int_distribution<int> dist(0, totalFiltered - 1);
-
+        
+        std::uniform_int_distribution<size_t> dist(0, filteredItems.size() - 1);
         return filteredItems[dist(gen)];
 
     } catch (const std::exception& e) {

@@ -1,8 +1,7 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
+#pragma once
 #include "Character.h"
 #include "Inventory.h"
+#include "Item.h"
 #include <string>
 
 class Player : public Character {
@@ -10,14 +9,19 @@ private:
     std::string name;
     int coins;
     Inventory inventory;
+    
+    Item equippedWeapon;
+    bool hasWeaponEquipped = false;
 
     void ajustarVida(long long vida);
 
 public:
-    Player(std::string nome, int maxLife, int currentLife, int attack, int armor, int speed, int coins, Inventory inventory);
-    ~Player() override;
+    Player(std::string nome, int maxLife, int currentLife,
+           int attack, int armor, int speed,
+           int coins, Inventory inventory);
+    virtual ~Player();
 
-    // --- inventario ---
+    // Inventário / Mochila
     const Inventory& getInventory() const;
     void setInventory(const Inventory& novo);
     bool addItem(const Item& item);
@@ -25,38 +29,40 @@ public:
     bool replaceItem(int index, const Item& novo);
     const Item* getItem(int index) const;
 
-    // --- arma atual ---
+    // Gestão da Arma Equipada Isolada
     const Item* getWeapon() const;
+    Item* getWeapon();
+    bool hasWeapon() const { return hasWeaponEquipped; }
+    bool equipWeaponFromSlot(int slotIndex);
+    bool unequipWeapon();
     bool applyWeaponOil(int option);
-    void setWeapon(Item* w);
-    bool equipWeapon(int slotIndex);
 
-    // --- Player nome ---
-    std::string getName() const;
-    // --- atributos totais (base + itens) ---
+    // Getters de Atributos Totais (Base + Equipamentos/Inventário)
     int getTotalMaxLife() const;
     int getTotalAttack() const;
     int getTotalArmor() const;
     int getTotalSpeed() const;
 
-    void heal(int quantidade);
-    void fullHeal();
+    // Sobrescrevendo os métodos da classe Character para retornar os valores totais
+    int getMaxLife() const override { return getTotalMaxLife(); }
+    int getAttack() const override { return getTotalAttack(); }
+    int getArmor() const override { return getTotalArmor(); }
+    int getSpeed() const override { return getTotalSpeed(); }
 
-    void printStats();
-    void printInventory();
-
-    // --- moedas ---
+    std::string getName() const;
     int getCoins() const;
     void setCoins(int valor);
     void addCoins(int valor);
     bool spendCoins(int valor);
 
-    // --- incrementos nos atributos base ---
-    void setCurrentLife(int valor);
+    void heal(int quantidade);
+    void fullHeal();
+    void setCurrentLife(int valor) override;
     void addMaxLife(int val);
     void addAttack(int val);
     void addArmor(int val);
     void addSpeed(int val);
-};
 
-#endif
+    void printStats();
+    void printInventory();
+};

@@ -22,7 +22,7 @@ public:
     Map(int stepsCounter = 30, bool day = true);
     
     // Movimentação do Jogador
-    bool movePlayer(int& playerY, int& playerX, Direction dir);
+    bool movePlayer(int& playerY, int& playerX, Direction dir, int baseVisionRadius = 3);
     void checkTileContent(int playerY, int playerX, Player* player, ItemManager* itemManager);
 
     // Gestão de Ciclo de Tempo
@@ -32,9 +32,15 @@ public:
     bool isDay() const;
     void addSteps(int val);
     void setSteps(int val);
+    int getVisionBonus() const; // Retorna o bônus/penalidade de visão conforme a hora atual
 
     // Visualização e Carregamento
-    void revealAroundPlayer(int radius = 3);
+    // 1. Revela a partir das coordenadas passadas (movimentação normal)
+    void revealAroundPlayer(int playerY, int playerX, int visionRadius = 3);
+    
+    // 2. Sobrecarga para o evento da Torre de Vigia (revela um raio específico)
+    void revealAroundPlayer(int visionRadius);
+
     void populateEventsAndBattles(int playerY, int playerX, Player* player, ItemManager* itemManager);
     void printMap(int playerY = -1, int playerX = -1);
     bool loadFromFile(const std::string& filename);

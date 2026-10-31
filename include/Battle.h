@@ -10,6 +10,7 @@ private:
 
 public:
     Battle(Player* player, Enemy* enemy, int turno = 1);
+    
     void nextTurn();
     int isBattleOver();
     void calcDamage();

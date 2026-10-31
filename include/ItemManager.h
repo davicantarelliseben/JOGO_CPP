@@ -3,7 +3,6 @@
 #include "Item.h"
 #include <vector>
 #include <string>
-#include <memory>
 #include <random>
 #include <map>
 
@@ -11,6 +10,9 @@ class ItemManager {
 private:
     std::vector<Item> allItems;
     std::map<std::string, std::vector<Item>> categorizedItems;
+
+    // Gerador de números aleatórios encapsulado na classe (boa prática)
+    mutable std::mt19937 rng;
 
 public:
     ItemManager();
@@ -24,7 +26,7 @@ public:
     // Retorna todos os itens
     const std::vector<Item>& getAllItems() const;
 
-    // Busca item por ID ou Nome
+    // Busca item por ID ou Nome (retorna nullptr se não encontrar)
     const Item* getItemById(int id) const;
     const Item* getItemByName(const std::string& name) const;
 
@@ -34,6 +36,6 @@ public:
     // Roleta item do bau
     Item getRandomItemForChest(std::string targetRarity = "");
 
-    // Itens por categoria
+    // Itens por categoria (ex: "weapons", "items")
     const std::vector<Item>& getItemsByCategory(const std::string& category) const;
 };

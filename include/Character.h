@@ -1,29 +1,33 @@
 #pragma once
 
 class Character {
+protected:
+    int maxLife;
+    int currentLife;
+    int attack;
+    int armor;
+    int speed;
 
-    protected:
-        int maxLife, currentLife, attack, armor, speed;
+public:
+    Character(int mLife = 0, int cLife = 0, int atk = 0, int armor = 0, int speed = 0);
+    virtual ~Character(); // Destrutor virtual é essencial para polimorfismo!
 
-    public:
-        Character(int mLife, int cLife, int atk, int armor, int speed);
-        virtual ~Character();
-        
-        int getMaxLife() const;
-        void setMaxLife(int valMaxLife);
+    // Adicione virtual aqui:
+    virtual int getMaxLife() const;
+    virtual void setMaxLife(int valMaxLife);
 
-        int getCurrentLife() const;
-        void setCurrentLife(int valCurrentLife);
+    virtual int getCurrentLife() const;
+    virtual void setCurrentLife(int valCurrentLife);
 
-        int getAttack() const;
-        void setAttack(int valAttack);
+    virtual int getAttack() const;
+    virtual void setAttack(int valAttack);
 
-        int getArmor() const;
-        void setArmor(int valArmor);
+    virtual int getArmor() const;
+    virtual void setArmor(int valArmor);
 
-        int getSpeed() const;
-        void setSpeed(int valSpeed);
-        
-        bool isAlive() const;
-        void takeDamage(int dmg);
+    virtual int getSpeed() const;
+    virtual void setSpeed(int valSpeed);
+
+    virtual bool isAlive() const;
+    virtual void takeDamage(int dmg);
 };

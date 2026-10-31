@@ -12,6 +12,8 @@ public:
     Enemy(int max_life, int currentLife, int attack, int armor, int speed,
           enemyType type, int level);
     
+    virtual ~Enemy() = default;
+    
     // Método estático para instanciar um Inimigo aleatório
     static Enemy* createRandomEnemy(int level = 1);
 

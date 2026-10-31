@@ -1,12 +1,10 @@
 #pragma once
-#include <exception>
+
+#include <stdexcept>
 #include <string>
 
-class GameItemException : public std::exception {
-private:
-    std::string mensagem;
-
+class GameItemException : public std::runtime_error {
 public:
-    explicit GameItemException(const std::string& msg);
-    const char* what() const noexcept override;
+    explicit GameItemException(const std::string& msg)
+        : std::runtime_error(msg) {}
 };

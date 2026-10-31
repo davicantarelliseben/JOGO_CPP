@@ -1,7 +1,7 @@
 #include "../include/Tiles.h"
 
-Tiles::Tiles(bool walkable, Battle* battle, Event* event, Enemy* enemy)
-    : walkable(walkable), battle(battle), enemy(enemy), event(event) {}
+Tiles::Tiles(bool walkable, Battle* battle, Event* event, Enemy* enemy, TileState state)
+    : walkable(walkable), battle(battle), enemy(enemy), event(event), state(state) {}
 
 void Tiles::setWalkable(bool v) {
     this->walkable = v;
@@ -45,4 +45,12 @@ void Tiles::setBattle(Battle* newBattle) {
 
 void Tiles::setEnemy(Enemy* newEnemy) {
     enemy = newEnemy;
+}
+
+TileState Tiles::getState() const {
+    return state;
+}
+
+void Tiles::setState(TileState newState) {
+    state = newState;
 }

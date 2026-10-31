@@ -1,25 +1,32 @@
 #pragma once
 #include <string>
 
+// Enumeração para identificar explicitamente a categoria do item
+enum class ItemType {
+    Weapon,
+    Passive
+};
+
 class Item {
 private:
     int id;
     std::string name;
     std::string rarity;
     int life, attack, armor, speed;
-
+    ItemType type; // Categoria do item (Weapon ou Passive)
+    
     bool attackOil = false;
     bool armorOil = false;
     bool speedOil = false;
 
 public:
-    Item() : id(0), name(""), rarity(""), life(0), attack(0), armor(0), speed(0) {}
+    Item() 
+        : id(0), name(""), rarity(""), life(0), attack(0), armor(0), speed(0), type(ItemType::Passive) {}
     
-    Item(int id, std::string name, std::string rarity, int life, int attack, int armor, int speed)
-        : id(id), name(name), rarity(rarity), life(life), attack(attack), armor(armor), speed(speed) {}
+    Item(int id, std::string name, std::string rarity, int life, int attack, int armor, int speed, ItemType type = ItemType::Passive)
+        : id(id), name(name), rarity(rarity), life(life), attack(attack), armor(armor), speed(speed), type(type) {}
 
     void printItem() const;
-
     int getId() const { return id; }
     std::string getName() const { return name; }
     std::string getRarity() const { return rarity; }
@@ -30,16 +37,19 @@ public:
     int getBaseAttack() const { return attack; }
     int getBaseArmor() const { return armor; }
     int getBaseSpeed() const { return speed; }
+    
+    // Métodos para gestão do Tipo de Item
+    ItemType getType() const { return type; }
+    void setType(ItemType newType) { type = newType; }
+    bool isWeapon() const { return type == ItemType::Weapon; }
 
     bool hasAttackOil() const { return attackOil; }
     bool hasArmorOil() const { return armorOil; }
     bool hasSpeedOil() const { return speedOil; }
 
-    // Aplica um oleo na arma; nao permite repetir o mesmo oleo
     bool applyOil(int opt);
     bool setOil(int opt);
     void clearOils();
-
     void setName(const std::string& newName) { name = newName; }
     void setRarity(const std::string& newRarity) { rarity = newRarity; }
     void setLife(int newLife) { life = newLife; }
