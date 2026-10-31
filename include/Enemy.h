@@ -11,6 +11,10 @@ private:
 public:
     Enemy(int max_life, int currentLife, int attack, int armor, int speed,
           enemyType type, int level);
+    
+    // Método estático para instanciar um Inimigo aleatório
+    static Enemy* createRandomEnemy(int level = 1);
+
     enemyType getType() const;
     int getLevel() const;
     void Buff(enemyType type);

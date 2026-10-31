@@ -8,7 +8,7 @@ void Tiles::setWalkable(bool v) {
 }
 
 bool Tiles::isWalkable() {
-    return walkable;
+    return this->walkable;
 }
 
 bool Tiles::isBattle() {
