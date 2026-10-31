@@ -10,9 +10,8 @@ protected:
 
 public:
     Character(int mLife = 0, int cLife = 0, int atk = 0, int armor = 0, int speed = 0);
-    virtual ~Character(); // Destrutor virtual é essencial para polimorfismo!
-
-    // Adicione virtual aqui:
+    virtual ~Character(); 
+    
     virtual int getMaxLife() const;
     virtual void setMaxLife(int valMaxLife);
 
