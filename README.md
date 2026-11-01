@@ -1,1 +1,1 @@
-
+Protótipo de jogo em C++ baseado no jogo He Is Coming. Basicamente, ele engloba um personagem inserido em um mapa com caminhos específicos para caminhar, nos quais se pode deparar com eventos especifícos ou com inimigos, onde serão obrigados a batalhar. O player tem stats baseados nos itens que carrega e com isso, sobrevive durante o jogo.
