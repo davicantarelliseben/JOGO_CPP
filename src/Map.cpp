@@ -70,7 +70,7 @@ Tiles& Map::getTile(int y, int x) {
     return this->grid[y][x];
 }
 
-// 1. Método original: Revela a área ao redor de coordenadas específicas (ex: do Jogador)
+// 1. Método original: Revela a área ao redor de coordenadas específicas
 void Map::revealAroundPlayer(int playerY, int playerX, int visionRadius) {
     if (grid.empty() || playerY < 0 || playerY >= altura || playerX < 0 || playerX >= largura) {
         return;
