@@ -19,7 +19,6 @@ public:
     bool addItem(const Item& item);
     bool removeItem(int index, Item* removido = nullptr);
     bool replaceItem(int index, const Item& novo, Item* antigo = nullptr);
-    Item* getItem(int index);
     const Item* getItem(int index) const;
 
     void printInventory(const Item* equippedWeapon = nullptr) const;
