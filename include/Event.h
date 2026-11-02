@@ -16,36 +16,35 @@ typedef enum {
 } eventType;
 
 class Event {
-private:
-    eventType type;
-    Player* player;
-    ItemManager* itemManager;
-    Map* map;
-    bool interactive;
+    private:
+        eventType type;
+        Player* player;
+        ItemManager* itemManager;
+        Map* map;
+        bool interactive;
 
-    // Handlers baseados diretamente nos comentarios do codigo
-    void handleTreasureChest();
-    void handleBladeOils();
-    void handleCampfire();
-    void handleForge();
-    void handleGolem();
-    void handleLookoutTower();
-    void handleTravellingMerchant();
-public:
-    Event(eventType type = treasureChest, Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = false);
-    static Event* createRandomEvent(Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = true);
+        void handleTreasureChest();
+        void handleBladeOils();
+        void handleCampfire();
+        void handleForge();
+        void handleGolem();
+        void handleLookoutTower();
+        void handleTravellingMerchant();
+        
+    public:
+        Event(eventType type = treasureChest, Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = false);
+        static Event* createRandomEvent(Player* player = nullptr, ItemManager* itemManager = nullptr, Map* map = nullptr, bool interactive = true);
 
-    eventType getEventType() const;
-    void setEventType(eventType type);
+        eventType getEventType() const;
+        void setEventType(eventType type);
 
-    void setPlayer(Player* p);
-    void setItemManager(ItemManager* im);
-    void setMap(Map* m);
-    void setInteractive(bool active);
-    bool isInteractive() const;
+        void setPlayer(Player* p);
+        void setItemManager(ItemManager* im);
+        void setMap(Map* m);
+        void setInteractive(bool active);
+        bool isInteractive() const;
 
-    // Disparos de evento
-    void triggerEvent(eventType type);
-    void triggerEvent(Player& p, ItemManager* im = nullptr, Map* m = nullptr);
-    void triggerEvent(eventType type, Player& p, ItemManager* im = nullptr, Map* m = nullptr);
+        void triggerEvent(eventType type);
+        void triggerEvent(Player& p, ItemManager* im = nullptr, Map* m = nullptr);
+        void triggerEvent(eventType type, Player& p, ItemManager* im = nullptr, Map* m = nullptr);
 };

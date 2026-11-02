@@ -2,7 +2,6 @@
 #include "Battle.h"
 #include "Event.h"
 
-// Enumeração para o controle da Névoa de Guerra (Fog of War)
 enum class TileState {
     Unexplored, // Não visitado / Coberto por névoa
     Explored,   // Já visitado (fora da visão direta)

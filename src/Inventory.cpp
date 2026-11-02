@@ -56,11 +56,6 @@ bool Inventory::replaceItem(int index, const Item& novo, Item* antigo) {
     return true;
 }
 
-// Item* Inventory::getItem(int index) {
-//     if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) return nullptr;
-//     return &slots[index];
-// }
-
 const Item* Inventory::getItem(int index) const {
     if (index < 0 || static_cast<std::size_t>(index) >= slots.size()) return nullptr;
     return &slots[index];

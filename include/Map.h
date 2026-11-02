@@ -3,11 +3,9 @@
 #include <vector>
 #include <string>
 
-// Declarações antecipadas (Forward declarations)
 class Player;
 class ItemManager;
 
-// Enumeração para as direções de movimento no mapa
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 
 class Map {
@@ -38,14 +36,13 @@ public:
     // 1. Revela a partir das coordenadas passadas (movimentação normal)
     void revealAroundPlayer(int playerY, int playerX, int visionRadius = 3);
     
-    // 2. Sobrecarga para o evento da Torre de Vigia (revela um raio específico)
+    // 2. Sobrecarga para o evento da lookouttower (revela um raio específico)
     void revealAroundPlayer(int visionRadius);
 
     void populateEventsAndBattles(int playerY, int playerX, Player* player, ItemManager* itemManager);
     void printMap(int playerY = -1, int playerX = -1);
     bool loadFromFile(const std::string& filename);
 
-    // Getters do Grid
     int getAltura();
     int getLargura();
     Tiles& getTile(int y, int x);

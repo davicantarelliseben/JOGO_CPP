@@ -23,7 +23,7 @@ public:
 
     void printInventory(const Item* equippedWeapon = nullptr) const;
 
-    // Bónus apenas dos itens guardados no inventário/mochila
+    // Bônus apenas dos itens guardados no inventário/mochila
     int getBonusLife() const;
     int getAttack() const;
     int getArmor() const;

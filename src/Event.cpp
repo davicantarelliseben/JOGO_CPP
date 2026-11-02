@@ -87,18 +87,6 @@ Event* Event::createRandomEvent(Player* player, ItemManager* itemManager, Map* m
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
-    // Defina os pesos para cada evento na ordem exata do enum eventType:
-    // { treasureChest, bladeOils, campfire, forge, golem, lookoutTower, travellingMerchant }
-    //
-    // Exemplo de proporções:
-    //  - Baú de Tesouro (treasureChest):      40  (Muito Comum)
-    //  - Acampamento (campfire):             20  (Comum)
-    //  - Óleos de Lâmina (bladeOils):         15  (Incomum)
-    //  - Forja (forge):                      10  (Incomum)
-    //  - Golem de Pedra (golem):             10  (Incomum)
-    //  - Mercador Viajante (merchant):        8   (Raro)
-    //  - Torre de Vigia (lookoutTower):       3   (Muito Raro)
-    
     std::discrete_distribution<int> dist({ 40, 15, 20, 10, 10, 3, 8 });
 
     int indiceSorteado = dist(gen);

@@ -61,7 +61,7 @@ void atacar(Character* atk, Character* def, const std::string& nomeAtk, const st
     std::cout << "\n";
 }
 
-} // namespace
+} 
 
 Battle::Battle(Player* player, Enemy* enemy, int turno)
     : turno(turno), player(player), enemy(enemy) {

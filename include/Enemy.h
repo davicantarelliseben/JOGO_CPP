@@ -14,7 +14,6 @@ public:
     
     virtual ~Enemy() = default;
     
-    // Método estático para instanciar um Inimigo aleatório
     static Enemy* createRandomEnemy(int level = 1);
 
     enemyType getType() const;

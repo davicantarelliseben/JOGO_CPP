@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 
-// Enumeração para identificar explicitamente a categoria do item
 enum class ItemType {
     Weapon,
     Passive
@@ -13,7 +12,7 @@ private:
     std::string name;
     std::string rarity;
     int life, attack, armor, speed;
-    ItemType type; // Categoria do item (Weapon ou Passive)
+    ItemType type;
     
     bool attackOil = false;
     bool armorOil = false;

@@ -11,7 +11,7 @@ private:
     std::vector<Item> allItems;
     std::map<std::string, std::vector<Item>> categorizedItems;
 
-    // Gerador de números aleatórios encapsulado na classe (boa prática)
+    // Gerador de números aleatórios encapsulado na classe
     mutable std::mt19937 rng;
 
 public:
