@@ -17,7 +17,7 @@ private:
     int largura = 0;
 
 public:
-    Map(int stepsCounter = 30, bool day = true);
+    Map(int stepsCounter, bool day);
     
     // Movimentação do Jogador
     bool movePlayer(int& playerY, int& playerX, Direction dir, int baseVisionRadius = 3);

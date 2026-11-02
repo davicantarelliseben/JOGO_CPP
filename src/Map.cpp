@@ -11,21 +11,13 @@
 #include <cmath>
 
 Map::Map(int stepsCounter, bool day)
-    : stepsCounter(stepsCounter), day(day) {
+    : stepsCounter(stepsCounter), day(day){
     grid = std::vector<std::vector<Tiles>>(altura, std::vector<Tiles>(largura, Tiles()));
 }
 
-int Map::countStep() {
-    if (stepsCounter == 0) {
-        cycleDay();
-    }
-
-    --stepsCounter;
-    if (stepsCounter == 0) {
-        cycleDay();
-    }
-    return stepsCounter;
-}
+//-----------------
+// GESTAO DO TEMPO
+//-----------------
 
 void Map::cycleDay() {
     if (this->day) {
@@ -35,6 +27,19 @@ void Map::cycleDay() {
         this->day = true;
         this->stepsCounter = 50;
     }
+}
+
+int Map::countStep() {
+    if (stepsCounter == 0) {
+        cycleDay();
+    }
+
+    --stepsCounter;
+
+    if (stepsCounter == 0) {
+        cycleDay();
+    }
+    return stepsCounter;
 }
 
 int Map::getSteps() {
@@ -58,6 +63,10 @@ void Map::setSteps(int val) {
     stepsCounter = val;
 }
 
+//-----------------
+// GESTAO DO GRID
+//-----------------
+
 int Map::getAltura() {
     return this->altura;
 }
@@ -69,6 +78,10 @@ int Map::getLargura() {
 Tiles& Map::getTile(int y, int x) {
     return this->grid[y][x];
 }
+
+//---------------------------------------
+// METODOS DE REVELAR AO REDOR DO PLAYER
+//---------------------------------------
 
 // 1. Método original: Revela a área ao redor de coordenadas específicas
 void Map::revealAroundPlayer(int playerY, int playerX, int visionRadius) {
@@ -139,7 +152,7 @@ bool Map::loadFromFile(const std::string& filename) {
         std::string line;
 
         while (std::getline(file, line)) {
-            if (!line.empty() && line.back() == '\r') {
+            if (!line.empty() && line.back() == '\n') {
                 line.pop_back();
             }
             if (!line.empty()) {

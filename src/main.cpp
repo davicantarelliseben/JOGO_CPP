@@ -13,14 +13,14 @@ int main() {
     Inventory inventario({}, 6);
     Player player("Guerreiro", 30, 30, 5, 2, 3, 30, inventario);
 
-    Map gameMap;
+    Map gameMap(50, true);
     if (!gameMap.loadFromFile("grid.txt")) {
         return 1;
     }
 
     // Posição inicial do jogador (Spawn)
-    int playerY = 3;
-    int playerX = 3;
+    int playerY = 32;
+    int playerX = 32;
 
     // Raio de visão base do jogador (expande no dia e encurta à noite)
     const int baseVisionRadius = 3;
