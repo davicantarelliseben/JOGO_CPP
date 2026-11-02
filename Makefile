@@ -1,18 +1,13 @@
-CXX      = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude
-SRCS     = $(wildcard src/*.cpp)
-OBJS     = $(SRCS:src/%.cpp=src/%.o)
-TARGET   = jogo.exe
+CPP      = g++
+CPPFLAGS = -Werror -Wall -Iinclude
+TARGET   = jogo
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
-
-src/%.o: src/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+$(TARGET): src/*.cpp
+	$(CPP) $(CPPFLAGS) src/*.cpp -o $(TARGET)
 
 clean:
-	del /Q /S src\*.o $(TARGET) 2>nul || rm -f src/*.o $(TARGET)
+	rm -f $(TARGET)
 
 .PHONY: all clean
