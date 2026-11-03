@@ -44,7 +44,5 @@ class Event {
         void setInteractive(bool active);
         bool isInteractive() const;
 
-        void triggerEvent(eventType type);
-        void triggerEvent(Player& p, ItemManager* im = nullptr, Map* m = nullptr);
-        void triggerEvent(eventType type, Player& p, ItemManager* im = nullptr, Map* m = nullptr);
+        void triggerEvent();
 };

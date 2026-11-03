@@ -382,7 +382,7 @@ void Map::checkTileContent(int playerY, int playerX, Player* player, ItemManager
         eventoAtual->setItemManager(itemManager);
         eventoAtual->setMap(this);
 
-        eventoAtual->triggerEvent(*player, itemManager, this);
+        eventoAtual->triggerEvent();
 
         delete eventoAtual;
         tileAtual.setEvent(nullptr);

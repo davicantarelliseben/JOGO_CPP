@@ -41,20 +41,7 @@ bool Event::isInteractive() const {
     return this->interactive;
 }
 
-void Event::triggerEvent(Player& p, ItemManager* im, Map* m) {
-    this->player = &p;
-    if (im != nullptr) this->itemManager = im;
-    if (m != nullptr) this->map = m;
-    triggerEvent(this->type);
-}
-
-void Event::triggerEvent(eventType newType, Player& p, ItemManager* im, Map* m) {
-    this->type = newType;
-    triggerEvent(p, im, m);
-}
-
-void Event::triggerEvent(eventType newType) {
-    this->type = newType;
+void Event::triggerEvent() {
     switch (this->type) {
     case treasureChest:
         handleTreasureChest();

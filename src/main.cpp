@@ -19,8 +19,8 @@ int main() {
     }
 
     // Posição inicial do jogador (Spawn)
-    int playerY = 32;
-    int playerX = 32;
+    int playerY = 45;
+    int playerX = 45;
 
     // Raio de visão base do jogador (expande no dia e encurta à noite)
     const int baseVisionRadius = 3;
