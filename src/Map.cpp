@@ -8,6 +8,7 @@
 #include <string>
 #include <exception>
 #include <random>
+#include "algorithm"
 #include <cmath>
 
 Map::Map(int stepsCounter, bool day)
@@ -29,7 +30,7 @@ void Map::cycleDay() {
     }
 }
 
-int Map::countStep() {
+void Map::countStep() {
     if (stepsCounter == 0) {
         cycleDay();
     }
@@ -39,7 +40,6 @@ int Map::countStep() {
     if (stepsCounter == 0) {
         cycleDay();
     }
-    return stepsCounter;
 }
 
 int Map::getSteps() {
@@ -136,6 +136,10 @@ void Map::revealAroundPlayer(int visionRadius) {
         }
     }
 }
+
+//------------------------------
+// METODOS RELACIONADOS À GRID
+//------------------------------
 
 bool Map::loadFromFile(const std::string& filename) {
     std::ifstream file;
@@ -316,6 +320,10 @@ void Map::populateEventsAndBattles(int playerY, int playerX, Player* player, Ite
     }
 }
 
+//-----------------------------------
+// MOVIMENTAÇÃO E CHECAGEM DOS TILES
+//-----------------------------------
+
 bool Map::movePlayer(int& playerY, int& playerX, Direction dir, int baseVisionRadius) {
     int newY = playerY;
     int newX = playerX;
@@ -340,7 +348,7 @@ bool Map::movePlayer(int& playerY, int& playerX, Direction dir, int baseVisionRa
     playerY = newY;
     playerX = newX;
 
-    // Incrementa os passos e avança o ciclo dia/noite
+    // decrementa os passos e avança o ciclo dia/noite
     countStep();
 
     // Calcula raio de visão final aplicando os bônus do ciclo de tempo

@@ -26,7 +26,7 @@ public:
     // Gestão de Ciclo de Tempo
     void cycleDay();
     int getSteps();
-    int countStep();
+    void countStep();
     bool isDay() const;
     void addSteps(int val);
     void setSteps(int val);
