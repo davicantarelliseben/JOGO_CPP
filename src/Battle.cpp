@@ -52,7 +52,9 @@ void atacar(Lutador& atk, Lutador& def) {
 // ---------------------------------------------------------------------------
 
 Battle::Battle(Player* player, Enemy* enemy, unsigned int turno)
-    : player(player), enemy(enemy), turno(turno) {}
+    : turno(turno), player(player), enemy(enemy),
+      playerShield(player == nullptr ? 0 : player->getTotalArmor()),
+      enemyShield(enemy == nullptr ? 0 : enemy->getArmor()) {}
 
 void Battle::battleGoing() {
     const unsigned int LIMITE_TURNOS = 100;   // evita loop infinito (ex.: ninguém tem ataque)
@@ -101,6 +103,41 @@ void Battle::battleGoing() {
 
 void Battle::nextTurn() {
     this->turno++;
+}
+
+void Battle::playerAttack() {
+    if (player == nullptr || enemy == nullptr) return;
+    unsigned int damage = player->getTotalAttack();
+    const unsigned int absorbed = std::min(damage, enemyShield);
+    enemyShield -= absorbed;
+    damage -= absorbed;
+    enemy->takeDamage(damage);
+}
+
+void Battle::enemyAttack() {
+    if (player == nullptr || enemy == nullptr) return;
+    unsigned int damage = enemy->getAttack();
+    const unsigned int absorbed = std::min(damage, playerShield);
+    playerShield -= absorbed;
+    damage -= absorbed;
+    player->takeDamage(damage);
+}
+
+unsigned int Battle::getPlayerShield() const {
+    return playerShield;
+}
+
+unsigned int Battle::getEnemyShield() const {
+    return enemyShield;
+}
+
+unsigned int Battle::getTurn() const {
+    return turno;
+}
+
+bool Battle::isPlayerFirst() const {
+    return player != nullptr && enemy != nullptr &&
+        player->getTotalSpeed() >= enemy->getSpeed();
 }
 
 void Battle::calcDamage() {

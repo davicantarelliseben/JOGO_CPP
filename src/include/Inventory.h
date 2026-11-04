@@ -25,13 +25,14 @@ class Inventory {
         bool removeItem(unsigned int index, Item* removido = nullptr); //remove um item usando numeros já previamente setados usando um indice
         bool replaceItem(unsigned int index, const Item& novo, Item* antigo = nullptr); //Troca um item por outro
         Item* getItem(unsigned int index); //Retorna o item usando um indice
+        const Item* getItem(unsigned int index) const;
 
         void printInventory() const;// Printa na tela o inventário
 
         // --- soma dos bonus de todos os itens ---
-        unsigned int getBonusLife() const; //Retorna a vida Bonus que é adicionada
-        unsigned int getAttack() const; // Retorna o ataque bonus que é adicionada
-        unsigned int getArmor() const; // Retorna a armadura bonus que é adicionada
-        unsigned int getSpeed() const; // Retorna a velocidade bonus que é adicionada
+        int getBonusLife() const; //Retorna a vida Bonus que é adicionada
+        int getAttack() const; // Retorna o ataque bonus que é adicionada
+        int getArmor() const; // Retorna a armadura bonus que é adicionada
+        int getSpeed() const; // Retorna a velocidade bonus que é adicionada
 
 }; 

@@ -2,7 +2,7 @@
 
 Event::Event(eventType type) : type(type) {}
 
-eventType Event::getEventType() {
+eventType Event::getEventType() const {
     return this->type;
 }
 

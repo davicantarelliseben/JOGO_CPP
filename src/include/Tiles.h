@@ -10,7 +10,10 @@ private:
 
 public:
     Tiles(bool walkable = true, Battle* battle = nullptr, Event* event = nullptr);
-    bool isWalkable();
-    bool isBattle();
-    bool isEvent();
+    bool isWalkable() const;
+    bool isBattle() const;
+    bool isEvent() const;
+    eventType getEventType() const;
+    void setWalkable(bool value);
+    void setEvent(Event* value);
 };

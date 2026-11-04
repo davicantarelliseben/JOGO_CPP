@@ -31,7 +31,9 @@ bool Player::addItem(const Item& item) {
     }
 
     Item copia = item;
-    currentLife += copia.getLife();
+    const int vidaAtualizada = static_cast<int>(currentLife) + copia.getLife();
+    currentLife = static_cast<unsigned int>(
+        std::clamp(vidaAtualizada, 0, static_cast<int>(getTotalMaxLife())));
     ajustarVida();
     return true;
 }
@@ -66,10 +68,18 @@ std::string Player::getName() { return this->name; }
 
 // ---------------- atributos totais ----------------
 
-unsigned int Player::getTotalMaxLife() const { return this->maxLife + inventory.getBonusLife(); }
-unsigned int Player::getTotalAttack() const { return this->attack + inventory.getAttack(); }
-unsigned int Player::getTotalArmor() const { return this->armor + inventory.getArmor(); }
-unsigned int Player::getTotalSpeed() const { return this->speed + inventory.getSpeed(); }
+unsigned int Player::getTotalMaxLife() const {
+    return static_cast<unsigned int>(std::max(0, static_cast<int>(maxLife) + inventory.getBonusLife()));
+}
+unsigned int Player::getTotalAttack() const {
+    return static_cast<unsigned int>(std::max(0, static_cast<int>(attack) + inventory.getAttack()));
+}
+unsigned int Player::getTotalArmor() const {
+    return static_cast<unsigned int>(std::max(0, static_cast<int>(armor) + inventory.getArmor()));
+}
+unsigned int Player::getTotalSpeed() const {
+    return static_cast<unsigned int>(std::max(0, static_cast<int>(speed) + inventory.getSpeed()));
+}
 
 void Player::ajustarVida() {
     if (currentLife > getTotalMaxLife()) {
@@ -78,10 +88,8 @@ void Player::ajustarVida() {
 }
 
 void Player::heal(unsigned int quantidade) {
-    currentLife += quantidade;
-    if (currentLife > getTotalMaxLife()) {
-        currentLife = getTotalMaxLife();
-    }
+    const unsigned int maxLife = getTotalMaxLife();
+    currentLife += std::min(quantidade, maxLife - std::min(currentLife, maxLife));
 }
 
 void Player::fullHeal() {

@@ -64,6 +64,13 @@ Item* Inventory::getItem(unsigned int index) {
     return &slots[index];
 }
 
+const Item* Inventory::getItem(unsigned int index) const {
+    if(index >= slots.size()){
+        return nullptr;
+    }
+    return &slots[index];
+}
+
 void Inventory::printInventory() const {
     std::cout << "Inventario (" << slots.size() << "/" << slotsSize << ")\n";
     for (unsigned int i = 0; i < slots.size(); i++) {
@@ -75,32 +82,32 @@ void Inventory::printInventory() const {
 
 // ---------------- bonus ----------------
  
-unsigned int Inventory::getBonusLife() const {
-    unsigned int total = 0;
+int Inventory::getBonusLife() const {
+    int total = 0;
     for (Item temp : slots){
         total += temp.getLife();
     }
     return total;
 }
  
-unsigned int Inventory::getAttack() const {
-    unsigned int total = 0;
+int Inventory::getAttack() const {
+    int total = 0;
     for (Item temp : slots){ 
         total += temp.getAttack();
     }
         return total;
 }
  
-unsigned int Inventory::getArmor() const {
-    unsigned int total = 0;
+int Inventory::getArmor() const {
+    int total = 0;
     for (Item temp : slots){
         total += temp.getArmor();
     }
     return total;
 }
  
-unsigned int Inventory::getSpeed() const {
-    unsigned int total = 0;
+int Inventory::getSpeed() const {
+    int total = 0;
     for (Item temp : slots){ 
         total += temp.getSpeed();
     }

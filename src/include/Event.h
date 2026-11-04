@@ -10,6 +10,6 @@ private:
 
 public:
     Event(eventType type = treasureChest);
-    eventType getEventType();
+    eventType getEventType() const;
     void triggerEvent(eventType type);
 };
