@@ -158,11 +158,11 @@ std::vector<Item> ItemManager::getDistinctItemsByRarity(const std::string& rarit
             result.push_back(item);
         }
 
-        if(result.size() >= count) break;
+        if(static_cast<int>(result.size()) >= count) break;
     }
 
     int poolSize = pool.size();
-    while(result.size() < count && poolSize > 0) {
+    while (static_cast<int>(result.size()) < count && poolSize > 0) {
         result.push_back(pool[result.size() % poolSize]);
     }
 
