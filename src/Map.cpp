@@ -117,8 +117,7 @@ void Map::revealAroundPlayer(int visionRadius) {
 
     for (int y = 0; y < altura; ++y) {
         for (int x = 0; x < largura; ++x) {
-            if (grid[y][x].getEvent() != nullptr && 
-                grid[y][x].getEvent()->getEventType() == eventType::lookoutTower) {
+            if (grid[y][x].getEvent() != nullptr && grid[y][x].getEvent()->getEventType() == eventType::lookoutTower) {
                 
                 // Aplica a revelação por raio euclidiano ao redor da posição da torre encontrada
                 for (int cy = y - visionRadius; cy <= y + visionRadius; ++cy) {
@@ -173,10 +172,7 @@ bool Map::loadFromFile(const std::string& filename) {
         altura = static_cast<int>(lines.size());
         largura = static_cast<int>(lines[0].size());
 
-        grid = std::vector<std::vector<Tiles>>(
-            altura, 
-            std::vector<Tiles>(largura, Tiles(false, nullptr, nullptr))
-        );
+        grid = std::vector<std::vector<Tiles>>(altura, std::vector<Tiles>(largura, Tiles()));
 
         for (int i = 0; i < altura; ++i) {
             for (int j = 0; j < largura; ++j) {
