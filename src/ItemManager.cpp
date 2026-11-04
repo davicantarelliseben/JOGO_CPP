@@ -18,10 +18,6 @@ bool ItemManager::loadItemsFromJson(const std::string& filePath) {
         if (!file.is_open()) {
             pathUsado = "Woodland_items.json";
             file.open(pathUsado);
-            if (!file.is_open()) {
-                pathUsado = "Woodland_items1.json";
-                file.open(pathUsado);
-            }
         }
 
         if (!file.is_open()) {
@@ -44,16 +40,7 @@ bool ItemManager::loadItemsFromJson(const std::string& filePath) {
                     std::string name = jsonItem.value("name", "Desconhecido");
                     std::string rarity = jsonItem.value("rarity", "Common");
 
-                    // Determina se o item é uma Arma (Weapon) ou Passivo (Passive)
-                    // 1. Prioriza a chave "type" se ela existir no objeto do item
-                    // 2. Se não existir, define pela categoria do array no JSON ("weapons" -> Weapon, "items" -> Passive)
-                    ItemType type = ItemType::Passive;
-                    if (jsonItem.contains("type")) {
-                        std::string typeStr = jsonItem.value("type", "Passive");
-                        type = (typeStr == "Weapon") ? ItemType::Weapon : ItemType::Passive;
-                    } else {
-                        type = (category == "weapons") ? ItemType::Weapon : ItemType::Passive;
-                    }
+                    ItemType type = (category == "weapons") ? ItemType::Weapon : ItemType::Passive; //operador ternario deixa tudo mais clean
 
                     int life = 0, attack = 0, armor = 0, speed = 0;
 
@@ -80,7 +67,7 @@ bool ItemManager::loadItemsFromJson(const std::string& filePath) {
                         speed = parseStat(stats, "speed");
                     }
 
-                    // Instancia o Item informando o ItemType correto
+                    //adicionado Type no final pra poder diferenciar "Weapons" de outros tipos de "Items" 
                     Item item(id, name, rarity, life, attack, armor, speed, type);
                     allItems.push_back(item);
                     categorizedItems[category].push_back(item);
@@ -113,7 +100,7 @@ const Item* ItemManager::getItemById(int id) const {
             return item.getId() == id;
         });
 
-        if (it != allItems.end()) {
+        if(it != allItems.end()) {
             return &(*it);
         }
         return nullptr;
@@ -153,7 +140,7 @@ std::vector<Item> ItemManager::getDistinctItemsByRarity(const std::string& rarit
         }
     );
 
-    if (pool.empty()) {
+    if(pool.empty()) {
         pool = allItems;
     }
 
@@ -162,64 +149,30 @@ std::vector<Item> ItemManager::getDistinctItemsByRarity(const std::string& rarit
     std::shuffle(pool.begin(), pool.end(), gen);
 
     std::vector<Item> result;
-    for (const auto& item : pool) {
-        bool jaExiste = std::any_of(result.begin(), result.end(), [&item](const Item& exist) {
+    for(const auto& item : pool) {
+        bool alreadyExists = std::any_of(result.begin(), result.end(), [&item](const Item& exist) {
             return exist.getName() == item.getName();
         });
 
-        if (!jaExiste) {
+        if(!alreadyExists) {
             result.push_back(item);
         }
 
-        if (static_cast<int>(result.size()) >= count) break;
+        if(result.size() >= count) break;
     }
 
-    size_t poolSize = pool.size();
-    while (static_cast<int>(result.size()) < count && poolSize > 0) {
+    int poolSize = pool.size();
+    while(result.size() < count && poolSize > 0) {
         result.push_back(pool[result.size() % poolSize]);
     }
 
     return result;
 }
 
-Item ItemManager::getRandomItemForChest(std::string targetRarity) {
-    try {
-        if (allItems.empty()) {
-            throw std::underflow_error("Lista de itens esta vazia. Carregue o JSON primeiro.");
-        }
-
-        if (targetRarity.empty()) {
-            targetRarity = getRandomRarity();
-        }
-
-        std::vector<Item> filteredItems;
-
-        std::copy_if(allItems.begin(), allItems.end(), std::back_inserter(filteredItems),
-            [&targetRarity](const Item& item) {
-                return item.getRarity() == targetRarity;
-            }
-        );
-
-        if (filteredItems.empty()) {
-            filteredItems = allItems;
-        }
-
-        static std::random_device rd;
-        static std::mt19937 gen(rd());
-        
-        std::uniform_int_distribution<size_t> dist(0, filteredItems.size() - 1);
-        return filteredItems[dist(gen)];
-
-    } catch (const std::exception& e) {
-        std::cerr << "[ItemManager Error] Erro ao roletar item para o bau: " << e.what() << std::endl;
-        return Item();
-    }
-}
-
 const std::vector<Item>& ItemManager::getItemsByCategory(const std::string& category) const {
     static const std::vector<Item> emptyVector;
     auto it = categorizedItems.find(category);
-    if (it != categorizedItems.end()) {
+    if(it != categorizedItems.end()) {
         return it->second;
     }
     return emptyVector;
