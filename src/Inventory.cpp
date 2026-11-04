@@ -65,32 +65,16 @@ void Inventory::printInventory(const Item* equippedWeapon) const {
     int count = slots.size();
     std::cout << "Mochila (" << count << "/" << slotsSize << ")\n";
     
-    // Exibe a arma equipada com o formato solicitado e cores/óleos
     if (equippedWeapon != nullptr) {
-        std::cout << "| Arma Equipada: \033[1;31m" << equippedWeapon->getName() << "\033[0m";
-        
-        if (equippedWeapon->hasAttackOil() || equippedWeapon->hasArmorOil() || equippedWeapon->hasSpeedOil()) {
-            std::cout << " [Óleos: ";
-            if (equippedWeapon->hasAttackOil()) std::cout << "Atk+1 ";
-            if (equippedWeapon->hasArmorOil())  std::cout << "Arm+1 ";
-            if (equippedWeapon->hasSpeedOil())  std::cout << "Spd+1 ";
-            std::cout << "]";
-        }
-        std::cout << std::endl;
+        equippedWeapon->printItem();
     } else {
         std::cout << "| Arma Equipada: \033[90mNenhuma\033[0m\n";
     }
 
-    // Listagem dos itens da mochila
     for (int i = 0; i < count; ++i) {
-        Item temp = slots[i];
-        std::cout << " [" << i + 1 << "] " << temp.getName()
-                  << " [" << temp.getRarity() << "]"
-                  << " | VIDA " << (temp.getLife() >= 0 ? "+" : "") << temp.getLife()
-                  << " | ATK "  << (temp.getAttack() >= 0 ? "+" : "") << temp.getAttack()
-                  << " | ARM "  << (temp.getArmor() >= 0 ? "+" : "") << temp.getArmor()
-                  << " | SPD "  << (temp.getSpeed() >= 0 ? "+" : "") << temp.getSpeed() << "\n";
-    }
+    std::cout << " [" << i + 1 << "] ";
+    slots[i].printItem();
+}
 }
 
 int Inventory::getBonusLife() const { return somarBonus(slots, [](const Item& item) { return item.getLife(); }); }

@@ -8,18 +8,6 @@ void Item::printItem() const {
     } else {
         std::cout << "--- " << name << " [" << rarity << "] (Item) ---" << std::endl;
     }
-    
-    std::cout << "ID: " << id << std::endl;
-
-    // Usando os getters para refletir os atributos com os óleos aplicados (se houver)
-    int totalAtk = getAttack();
-    int totalArm = getArmor();
-    int totalSpd = getSpeed();
-
-    if (life != 0)     std::cout << "Life: "   << (life > 0 ? "+" : "")   << life << std::endl;
-    if (totalAtk != 0) std::cout << "Attack: " << (totalAtk > 0 ? "+" : "") << totalAtk << std::endl;
-    if (totalArm != 0) std::cout << "Armor: "  << (totalArm > 0 ? "+" : "")  << totalArm << std::endl;
-    if (totalSpd != 0) std::cout << "Speed: "  << (totalSpd > 0 ? "+" : "")  << totalSpd << std::endl;
 
     if (hasAttackOil() || hasArmorOil() || hasSpeedOil()) {
         std::cout << "Applied Oil: ";
@@ -28,6 +16,17 @@ void Item::printItem() const {
         if (hasSpeedOil())  std::cout << "[Speed Oil (+1)] ";
         std::cout << std::endl;
     }
+    
+    int totalAtk = getAttack();
+    int totalArm = getArmor();
+    int totalSpd = getSpeed();
+
+    if (life != 0)     std::cout << " | Life: "   << (life > 0 ? "+" : "")   << life << std::endl;
+    if (totalAtk != 0) std::cout << " | Attack: " << (totalAtk > 0 ? "+" : "") << totalAtk << std::endl;
+    if (totalArm != 0) std::cout << " | Armor: "  << (totalArm > 0 ? "+" : "")  << totalArm << std::endl;
+    if (totalSpd != 0) std::cout << " | Speed: "  << (totalSpd > 0 ? "+" : "")  << totalSpd << std::endl;
+
+    
     std::cout << "-----------------------" << std::endl;
 }
 

@@ -105,25 +105,9 @@ void Event::handleTreasureChest() {
             throw GameItemException("Nenhum item encontrado no catalogo para a raridade " + raridadeSorteada);
         }
 
-        // Exibe apenas armas (isWeapon()) em vermelho negrito
         auto exibirOpcao = [](int num, const Item& item) {
             std::cout << " [" << num << "] ";
-            if (item.isWeapon()) {
-                std::cout << "\033[1;31m" << item.getName()
-                          << " [" << item.getRarity() << "]"
-                          << " | VIDA " << (item.getLife() >= 0 ? "+" : "") << item.getLife()
-                          << " | ATK "  << (item.getAttack() >= 0 ? "+" : "") << item.getAttack()
-                          << " | ARM "  << (item.getArmor() >= 0 ? "+" : "") << item.getArmor()
-                          << " | SPD "  << (item.getSpeed() >= 0 ? "+" : "") << item.getSpeed()
-                          << "\033[0m\n";
-            } else {
-                std::cout << item.getName()
-                          << " [" << item.getRarity() << "]"
-                          << " | VIDA " << (item.getLife() >= 0 ? "+" : "") << item.getLife()
-                          << " | ATK "  << (item.getAttack() >= 0 ? "+" : "") << item.getAttack()
-                          << " | ARM "  << (item.getArmor() >= 0 ? "+" : "") << item.getArmor()
-                          << " | SPD "  << (item.getSpeed() >= 0 ? "+" : "") << item.getSpeed() << "\n";
-            }
+            item.printItem();
         };
 
         int numOpcoes = opcoes.size();
@@ -455,23 +439,7 @@ void Event::handleTravellingMerchant() {
             for (int i = 0; i < totalOfertas; ++i) {
                 const auto& of = ofertas[i];
                 std::cout << " [" << (i + 1) << "] ";
-
-                if (of.item.isWeapon()) {
-                    std::cout << "\033[1;31m" << of.item.getName() << " [" << of.item.getRarity() << "]"
-                              << " | Preco: " << of.preco << " moedas"
-                              << " | VIDA " << (of.item.getLife() >= 0 ? "+" : "") << of.item.getLife()
-                              << " | ATK "  << (of.item.getAttack() >= 0 ? "+" : "") << of.item.getAttack()
-                              << " | ARM "  << (of.item.getArmor() >= 0 ? "+" : "") << of.item.getArmor()
-                              << " | SPD "  << (of.item.getSpeed() >= 0 ? "+" : "") << of.item.getSpeed()
-                              << "\033[0m\n";
-                } else {
-                    std::cout << of.item.getName() << " [" << of.item.getRarity() << "]"
-                              << " | Preco: " << of.preco << " moedas"
-                              << " | VIDA " << (of.item.getLife() >= 0 ? "+" : "") << of.item.getLife()
-                              << " | ATK "  << (of.item.getAttack() >= 0 ? "+" : "") << of.item.getAttack()
-                              << " | ARM "  << (of.item.getArmor() >= 0 ? "+" : "") << of.item.getArmor()
-                              << " | SPD "  << (of.item.getSpeed() >= 0 ? "+" : "") << of.item.getSpeed() << "\n";
-                }
+                of.item.printItem();
             }
             std::cout << " [0] Nao comprar nada / Sair\n";
         };
