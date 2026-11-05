@@ -46,19 +46,6 @@ public:
     bool hasArmorOil() const { return armorOil; }
     bool hasSpeedOil() const { return speedOil; }
 
-    bool applyOil(int opt);
     bool setOil(int opt);
     void clearOils();
-    void setName(const std::string& newName) { name = newName; }
-    void setRarity(const std::string& newRarity) { rarity = newRarity; }
-    void setLife(int newLife) { life = newLife; }
-    void setAttack(int newAttack) { attack = newAttack; }
-    void setArmor(int newArmor) { armor = newArmor; }
-    void setSpeed(int newSpeed) { speed = newSpeed; }
-    void upgrade(int dLife, int dAtk, int dArm, int dSpd) {
-        life += dLife;
-        attack += dAtk;
-        armor += dArm;
-        speed += dSpd;
-    }
 };

@@ -91,7 +91,7 @@ bool Player::equipWeaponFromSlot(int slotIndex) {
 }
 
 bool Player::applyWeaponOil(int option) {
-    return hasWeaponEquipped && equippedWeapon.applyOil(option);
+    return hasWeaponEquipped && equippedWeapon.setOil(option);
 }
 
 // ---------------- Atributos Totais ----------------

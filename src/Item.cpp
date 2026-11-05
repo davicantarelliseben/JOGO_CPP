@@ -30,7 +30,17 @@ void Item::printItem() const {
     std::cout << "-----------------------" << std::endl;
 }
 
-bool Item::applyOil(int opt) {
+void Item::clearOils() {
+    this->attackOil = false;
+    this->armorOil  = false;
+    this->speedOil  = false;
+}
+
+bool Item::setOil(int opt) {
+    if (opt == 0) {
+        clearOils();
+        return true;
+    }
     if (opt == 1) {
         if (this->attackOil) return false;
         this->attackOil = true;
@@ -47,18 +57,4 @@ bool Item::applyOil(int opt) {
         return true;
     }
     return false;
-}
-
-void Item::clearOils() {
-    this->attackOil = false;
-    this->armorOil  = false;
-    this->speedOil  = false;
-}
-
-bool Item::setOil(int opt) {
-    if (opt == 0) {
-        clearOils();
-        return true;
-    }
-    return applyOil(opt);
 }
