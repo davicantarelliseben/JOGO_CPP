@@ -4,9 +4,9 @@
 void Item::printItem() const {
     // Se for uma Arma, imprime o cabeçalho destacando o nome em vermelho
     if (isWeapon()) {
-        std::cout << "--- \033[1;31m" << name << "\033[0m [" << rarity << "] (Arma) ---" << std::endl;
+        std::cout << "\033[1;31m" << name <<  " [" << rarity << "] (Arma)" << "\033[0m"<< std::endl;
     } else {
-        std::cout << "--- " << name << " [" << rarity << "] (Item) ---" << std::endl;
+        std::cout << name << " [" << rarity << "] (Item)" << std::endl;
     }
 
     if (hasAttackOil() || hasArmorOil() || hasSpeedOil()) {

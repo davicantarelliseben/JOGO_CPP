@@ -15,15 +15,13 @@ public:
     int getItemCount() const;
     bool isFull() const;
     bool isEmpty() const;
-
-    bool addItem(const Item& item);
+    bool addItem(const Item& item, Item* substituido = nullptr);
     bool removeItem(int index, Item* removido = nullptr);
     bool replaceItem(int index, const Item& novo, Item* antigo = nullptr);
     const Item* getItem(int index) const;
 
     void printInventory(const Item* equippedWeapon = nullptr) const;
 
-    // Bônus apenas dos itens guardados no inventário/mochila
     int getBonusLife() const;
     int getAttack() const;
     int getArmor() const;
